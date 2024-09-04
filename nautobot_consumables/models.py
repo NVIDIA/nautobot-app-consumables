@@ -18,6 +18,7 @@
 from typing import Any
 
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import ForeignKey
 from django.urls import reverse
@@ -248,7 +249,7 @@ class ConsumablePool(PrimaryModel):
         related_name="consumable_pools",
     )
 
-    quantity = models.PositiveSmallIntegerField()
+    quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
 
     csv_headers = ["name", "consumable", "location", "quantity"]
 
@@ -318,7 +319,7 @@ class CheckedOutConsumable(PrimaryModel):
         related_name="consumables",
     )
 
-    quantity = models.PositiveSmallIntegerField()
+    quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
 
     csv_headers = ["consumable_pool", "device", "quantity"]
 
@@ -354,21 +355,22 @@ class CheckedOutConsumable(PrimaryModel):
         """Validate a CheckedOutConsumable instance."""
         super().clean()
 
-        if self.device.location != self.consumable_pool.location:
-            raise ValidationError(
-                f"Cannot check out consumables from Pool {self.consumable_pool.name} in "
-                f"location {self.consumable_pool.location.name} to Device {self.device.name} "
-                f"in location {self.device.location.name}"
-            )
+        if hasattr(self, "device") and hasattr(self, "consumable_pool"):
+            if self.device.location != self.consumable_pool.location:
+                raise ValidationError(
+                    f"Cannot check out consumables from Pool {self.consumable_pool.name} in "
+                    f"location {self.consumable_pool.location.name} to Device {self.device.name} "
+                    f"in location {self.device.location.name}"
+                )
 
-        previous_quantity = 0
-        if self.present_in_database:
-            obj = self.__class__.objects.get(pk=self.pk)
-            previous_quantity = obj.quantity
+            previous_quantity = 0
+            if self.present_in_database:
+                obj = self.__class__.objects.get(pk=self.pk)
+                previous_quantity = obj.quantity
 
-        maximum_quantity = previous_quantity + self.consumable_pool.available_quantity
-        if self.quantity > maximum_quantity:
-            raise ValidationError(
-                f"Consumable pool does not have enough available capacity, requesting "
-                f"{self.quantity}, only {maximum_quantity} available."
-            )
+            maximum_quantity = previous_quantity + self.consumable_pool.available_quantity
+            if self.quantity > maximum_quantity:
+                raise ValidationError(
+                    f"Consumable pool does not have enough available capacity, requesting "
+                    f"{self.quantity}, only {maximum_quantity} available."
+                )

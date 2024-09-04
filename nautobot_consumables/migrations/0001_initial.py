@@ -2,6 +2,7 @@
 import uuid
 
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.validators import MinValueValidator
 from django.db import migrations, models
 from django.db.models import deletion
 from nautobot.extras.models.mixins import DynamicGroupMixin, NotesMixin
@@ -141,7 +142,7 @@ class Migration(migrations.Migration):
                         naturalize_function=naturalize,
                     ),
                 ),
-                ('quantity', models.PositiveSmallIntegerField()),
+                ('quantity', models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])),
                 (
                     'consumable',
                     models.ForeignKey(
@@ -218,7 +219,7 @@ class Migration(migrations.Migration):
                         encoder=DjangoJSONEncoder,
                     ),
                 ),
-                ('quantity', models.PositiveSmallIntegerField()),
+                ('quantity', models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])),
                 (
                     'consumable_pool',
                     models.ForeignKey(

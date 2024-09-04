@@ -251,7 +251,9 @@ class CheckedOutConsumableTestCase(TestCase):
 
         with self.subTest(check="pool_only"):
             new_checked_out_consumable.device = None
-            new_checked_out_consumable.consumable_pool = models.ConsumablePool.objects.first()
+            new_checked_out_consumable.consumable_pool = models.ConsumablePool.objects.get(
+                name="Generic 1 Pool 1",
+            )
             self.assertEqual(f"{new_checked_out_consumable}", "No Device | Generic 1 Pool 1")
 
         with self.subTest(check="complete"):
