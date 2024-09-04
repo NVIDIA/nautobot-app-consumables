@@ -74,7 +74,8 @@ var initJsoneditor = function () {
 }
 
 if (schemaSelector) {
-    var schemaLoader = function () {
+    var schemaLoader = function (event) {
+        console.log("Event seen: " + event.type);
         var default_schema = null;
         if (schemaSelector.value !== "") {
             var url = apiURL.value + schemaSelector.value + "/";
@@ -98,8 +99,8 @@ if (schemaSelector) {
 
         mergeOptions()
     };
-    window.addEventListener('load', schemaLoader, false);
-    schemaSelector.addEventListener('change', schemaLoader, false);
+    window.addEventListener('load', schemaLoader);
+    $(schemaSelector).on('change', schemaLoader);
 }
 
 if (setSchema) {

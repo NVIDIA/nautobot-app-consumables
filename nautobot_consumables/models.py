@@ -180,6 +180,8 @@ class Consumable(JSONModel):
         """Consumable model options."""
         unique_together = [["manufacturer", "consumable_type", "product_id"]]
         ordering = ["consumable_type", "_name"]
+        verbose_name = "Consumable"
+        verbose_name_plural = "Consumables"
 
     def __str__(self) -> str:
         """Default string representation of the Consumable."""

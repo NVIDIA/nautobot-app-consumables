@@ -21,11 +21,48 @@
     {% endfor %}
     </div>
 </div>
-    {% include "nautobot_consumables/inc/json_form_fields.html" %}
-    {% include "inc/extras_features_edit_form_fields.html" %}
+    {% if form.schema %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>{{ obj_type|title }} Schema</strong>
+    </div>
+    <div class="panel-body">{% render_field form.schema %}</div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a class="btn btn-primary btn-xs pull-right" id="setschema">Update Schema</a>
+        <strong>Form Preview</strong>
+    </div>
+    <div class="panel-body">
+        <div id="editor_holder"></div>
+    </div>
+</div>
+    {% endif %}
+
+    {% if form.data or demo %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>{% if title %}{{ title }}{% else %}{{ obj_type|title }} Details{% endif %}</strong>
+    </div>
+    <div class="panel-body">
+        <div id="editor_holder"></div>
+    {% if demo %}
+        <input type="hidden" id="setschema" />
+    {% endif %}
+        <input type="hidden" id="id_api_url" value="{% url "plugins-api:nautobot_consumables-api:consumabletype-list" %}" />
+        <input type="hidden" id="id_schema" name="schema" value="{{ object.schema | default_if_none:"" | safe }}" />
+        <input type="hidden" id="starting_data" name="starting_data" value="{{ object.data | default_if_none:"" | safe }}" />
+        <input type="hidden" id="data" name="data" />
+    </div>
+</div>
+    {% endif %}
+{% include "inc/extras_features_edit_form_fields.html" %}
 {% endblock form %}
 
 {% block javascript %}
 {{ block.super }}
+<script src="{% static 'nautobot_consumables/js/jsoneditor.js' %}"></script>
+<script src="{% static 'nautobot_consumables/js/json5.min.js' %}"></script>
+<script src="{% static 'nautobot_consumables/js/nautobot-jsoneditor.js' %}"></script>
 {% include "nautobot_consumables/inc/form_submit_javascript.html" %}
 {% endblock javascript %}

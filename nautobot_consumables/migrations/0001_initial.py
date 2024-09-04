@@ -60,6 +60,8 @@ class Migration(migrations.Migration):
                 ('product_id', models.CharField(max_length=100)),
             ],
             options={
+                'verbose_name': 'Consumable',
+                'verbose_name_plural': 'Consumables',
                 'ordering': ['consumable_type', '_name'],
             },
             bases=(models.Model, DynamicGroupMixin, NotesMixin),

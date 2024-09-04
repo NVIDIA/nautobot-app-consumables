@@ -74,6 +74,9 @@ class ConsumableViewSet(NautobotUIViewSet):
         """Gather extra context for the views."""
         context = super().get_extra_context(request, instance)
 
+        if self.action == "create":
+            context["demo"] = True
+
         if self.action == "retrieve":
             context["table_consumablepools"] = tables.ConsumablePoolDetailConsumableTable(
                 models.ConsumablePool.objects.filter(consumable=instance.pk)
