@@ -1,0 +1,26 @@
+{% extends "generic/object_retrieve.html" %}
+{% load helpers %}
+{% load static %}
+
+{% block content_left_page %}
+    {% if object.schema %}
+        {% include "nautobot_consumables/inc/json_form_fields.html" with demo=True title="Sample Form" %}
+    {% endif %}
+{% endblock content_left_page %}
+
+{% block content_right_page %}
+    {% include "nautobot_consumables/inc/bulk_edit_table.html" with table=table_consumables title="Consumables" add_url="plugins:nautobot_consumables:consumable_add" %}
+{% endblock content_right_page %}
+
+{% block content_full_width_page %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>Consumable Type Schema</strong>
+    </div>
+    <div class="panel-body">
+        <div class="rendered-json-data">
+            <pre>{{ object.schema|render_json }}</pre>
+        </div>
+    </div>
+</div>
+{% endblock content_full_width_page %}

@@ -1,0 +1,31 @@
+{% extends "generic/object_create.html" %}
+{% load helpers %}
+{% load form_helpers %}
+{% load static %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static "nautobot_consumables/css/colors.css" %}" />
+{% endblock extra_styles %}
+
+{% block form %}
+<div class="panel panel-default">
+    <div class="panel-heading"><strong>{{ obj_type|title }}</strong></div>
+    <div class="panel-body">
+    {% for field in form.visible_fields %}
+        {% if field.name not in form.exclude_list and field.name not in form.relationships %}
+            {% render_field field %}
+        {% endif %}
+    {% endfor %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    </div>
+</div>
+    {% include "nautobot_consumables/inc/json_form_fields.html" %}
+    {% include "inc/extras_features_edit_form_fields.html" %}
+{% endblock form %}
+
+{% block javascript %}
+{{ block.super }}
+{% include "nautobot_consumables/inc/form_submit_javascript.html" %}
+{% endblock javascript %}

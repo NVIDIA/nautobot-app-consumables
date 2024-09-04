@@ -1,0 +1,20 @@
+{% extends "generic/object_create.html" %}
+
+{% block content %}
+    {% if display_warning %}
+<div class="pane panel-warning">
+    <div class="panel-heading"><strong>Warning!</strong></div>
+    <div class="panel-body">
+        Pool has {{ checked_out }} checked out Consumable{% if checked_out > 1 %}s{% endif %} - moving a Consumable Pool to a new Location will cause all checked out Consumables to be checked back in.
+    </div>
+</div>
+    {% endif %}
+
+{{ block.super }}
+
+{% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+{% include "nautobot_consumables/inc/form_submit_javascript.html" %}
+{% endblock javascript %}

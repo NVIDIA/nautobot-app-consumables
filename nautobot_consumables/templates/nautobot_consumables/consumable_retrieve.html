@@ -1,0 +1,41 @@
+{% extends "generic/object_retrieve.html" %}
+{% load helpers %}
+
+{% block content_left_page %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>Consumable Details</strong>
+    </div>
+    <table class="table table-hover panel-body attr-table">
+        <tr>
+            <td>Name</td>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td><a href="{{ object.consumable_type.get_absolute_url }}">{{ object.consumable_type }}</a></td>
+        </tr>
+        <tr>
+            <td>Manufacturer</td>
+            <td><a href="{{ object.manufacturer.get_absolute_url }}">{{ object.manufacturer }}</a></td>
+        </tr>
+        <tr>
+            <td>Product ID</td>
+            <td>{{ object.product_id }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock content_left_page %}
+
+{% block content_right_page %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>Item Details</strong>
+    </div>
+    {% include "nautobot_consumables/inc/json_details.html" with template_details=object.template_details %}
+</div>
+{% endblock content_right_page %}
+
+{% block content_full_width_page %}
+    {% include "nautobot_consumables/inc/bulk_edit_table.html" with table=table_consumablepools title="Consumable Pools" add_url="plugins:nautobot_consumables:consumablepool_add" bulk_edit_url="plugins:nautobot_consumables:consumablepool_bulk_edit" edit_class="primary" disable_pagination=disable_pagination bulk_modify="true" %}
+{% endblock content_full_width_page %}

@@ -1,0 +1,19 @@
+{% extends "generic/object_create.html" %}
+{% spaceless %}
+
+{% block buttons %}
+    {% if editing %}
+<button type="submit" name="_update" class="btn btn-primary">Update</button>
+    {% else %}
+<button type="submit" name="_create" class="btn btn-primary">Check Out</button>
+    {% endif %}
+<a href="{{ return_url }}" class="btn btn-default">Cancel</a>
+{% endblock buttons %}
+
+{% block javascript %}
+    {{ block.super }}
+
+{% include "nautobot_consumables/inc/form_submit_javascript.html" %}
+{% endblock javascript %}
+
+{% endspaceless %}

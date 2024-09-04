@@ -1,0 +1,82 @@
+{% extends "generic/object_retrieve.html" %}
+{% load helpers %}
+
+{% block buttons %}
+    {% if perms.nautobot_consumables.add_checkedoutconsumable %}
+<a href="{% url "plugins:nautobot_consumables:checkedoutconsumable_add" %}?consumable_pool={{ object.pk }}" class="btn btn-info" title="Check Out">
+    <i class="mdi mdi-clipboard-check-outline" aria-hidden="true"></i> Check Out
+</a>
+    {% endif %}
+    {{ block.super }}
+{% endblock buttons %}
+
+{% block content_left_page %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>Consumable Pool Details</strong>
+    </div>
+    <table class="table table-hover panel-body attr-table">
+        <tr>
+            <td>Name</td>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td>Consumable</td>
+            <td><a href="{{ object.consumable.get_absolute_url }}">{{ object.consumable }}</a></td>
+        </tr>
+        <tr>
+            <td>Storage Location</td>
+            <td><a href="{{ object.location.get_absolute_url }}">{{ object.location }}</a></td>
+        </tr>
+        <tr>
+            <td>Quantity</td>
+            <td>{{ object.quantity }}</td>
+        </tr>
+        <tr>
+            <td>Used Quantity</td>
+            <td>{{ object.used_quantity }}</td>
+        </tr>
+        <tr>
+            <td>Available Quantity</td>
+            <td>{{ object.available_quantity }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock content_left_page %}
+
+{% block content_right_page %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>{{ object.consumable.name }} Details</strong>
+    </div>
+    <table class="table table-hover panel-body attr-table">
+        <tr>
+            <td>Name</td>
+            <td>{{ object.consumable.name }}</td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>{{ object.consumable.consumable_type | hyperlinked_object }}</td>
+        </tr>
+        <tr>
+            <td>Manufacturer</td>
+            <td>{{ object.consumable.manufacturer | hyperlinked_object }}</td>
+        </tr>
+        <tr>
+            <td>Product ID</td>
+            <td>{{ object.consumable.product_id }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>{{ object.consumable.name }} Item Details</strong>
+    </div>
+    {% include "nautobot_consumables/inc/json_details.html" with template_details=object.consumable.template_details %}
+</div>
+{% endblock content_right_page %}
+
+{% block content_full_width_page %}
+    {% include "nautobot_consumables/inc/bulk_edit_table.html" with table=checkedoutconsumables_table title="Checked Out Consumables" add_url="plugins:nautobot_consumables:checkedoutconsumable_add" add_querystring=checkedoutconsumables_add_querystring bulk_edit_url="plugins:nautobot_consumables:checkedoutconsumable_bulk_edit" bulk_delete_url="plugins:nautobot_consumables:checkedoutconsumable_bulk_delete" delete_icon="mdi-clipboard-text" delete_text="Check in Selected" delete_class="default" disable_pagination=disable_pagination %}
+{% endblock content_full_width_page %}

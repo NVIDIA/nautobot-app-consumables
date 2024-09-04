@@ -1,0 +1,37 @@
+{% extends "generic/object_retrieve.html" %}
+{% load helpers %}
+
+{% block buttons %}
+    {% if perms.nautobot_consumables.change_checkedoutconsumable %}
+<a href="{% url "plugins:nautobot_consumables:checkedoutconsumable_edit" object.pk %}?return_url={{ request.path }}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="btn btn-warning" title="Update">
+    <i class="mdi mdi-pencil"></i> Update
+</a>
+    {% endif %}
+    {% if perms.nautobot_consumables.delete_checkedoutconsumable %}
+<a href="{% url "plugins:nautobot_consumables:checkedoutconsumable_delete" object.pk %}?return_url={{ request.path }}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="btn btn-primary" title="Check In">
+    <i class="mdi mdi-clipboard-text"></i> Check In
+</a>
+    {% endif %}
+{% endblock buttons %}
+
+{% block content_left_page %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>Checked Out Consumable Details</strong>
+    </div>
+    <table class="table table-hover panel-body attr-table">
+        <tr>
+            <td>Consumable Pool</td>
+            <td>{{ object.consumable_pool | hyperlinked_object }}</td>
+        </tr>
+        <tr>
+            <td>Device</td>
+            <td>{{ object.device | hyperlinked_object }}</td>
+        </tr>
+        <tr>
+            <td>Quantity</td>
+            <td>{{ object.quantity }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock content_left_page %}

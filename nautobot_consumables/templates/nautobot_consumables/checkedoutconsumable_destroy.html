@@ -1,0 +1,9 @@
+{% extends "utilities/confirmation_form.html" %}
+{% load form_helpers %}
+
+{% block title %}Check in <strong>{{ object.consumable_pool }}</strong> items?{% endblock title %}
+
+{% block message %}
+    <p>Are you sure you want to check in {{ object.quantity }} <strong>{{ object.consumable_pool.consumable.name }}</strong> ({{ object.consumable_pool.consumable.product_id }}) items to pool <strong>{{ object.consumable_pool.name }}</strong> in {{ object.consumable_pool.location }}?</p>
+    {% block message_extra %}{% endblock message_extra %}
+{% endblock message %}

@@ -1,0 +1,33 @@
+{% load helpers %}
+
+{% if template_details %}
+<table class="table table-hover panel-body attr-table">
+    {% for item in template_details %}
+    <tr>
+        <td>{{ item.1.title | title }}</td>
+        <td>
+        {% if "background_color" in item.1 %}
+            <span class="label color-block" style="color: {{ item.1.value.background_color | fgcolor }}; background-color: #{{ item.1.background_color }}">{{ item.1.value }}</span>
+        {% elif item.1.array %}
+            <table class="table table-hover">
+            {% for value in item.1.value %}
+                {% for k, v in value.items %}
+                <tr>
+                    <td>{{ k | title }}</td>
+                    <td>{{ v }}</td>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+            </table>
+        {% else %}
+            {{ item.1.value }}
+        {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<div class="panel-body">
+    <p>No extra details found for {{ object }}.</p>
+</div>
+{% endif %}

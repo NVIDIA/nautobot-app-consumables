@@ -1,0 +1,15 @@
+{% extends "generic/object_bulk_update.html" %}
+
+{% block content %}
+    {% if display_warning %}
+<div class="pane panel-warning">
+    <div class="panel-heading"><strong>Warning!</strong></div>
+    <div class="panel-body">
+        Moving Consumable Pools to a new Location will cause all checked out Consumables in those Pools to be checked back in.
+    </div>
+</div>
+    {% endif %}
+
+{{ block.super }}
+
+{% endblock content %}

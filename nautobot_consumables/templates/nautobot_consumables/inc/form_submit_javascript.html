@@ -1,0 +1,10 @@
+<script type="text/javascript">
+    /*
+    Select inputs that the user isn't allowed to change are disabled in the form, because the select
+    element doesn't support the readonly flag. Unfortunately disabled inputs are skipped when
+    submitting form data, so they have to be enabled when submitting.
+     */
+    $('form.form-horizontal').on('submit', function() {
+        $('select.nautobot-select2-api').prop('disabled', false);
+    });
+</script>

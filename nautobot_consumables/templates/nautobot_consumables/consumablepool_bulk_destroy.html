@@ -1,0 +1,7 @@
+{% extends "generic/object_bulk_destroy.html" %}
+
+{% block message_extra %}
+    {% if display_warning %}
+                    <p>These Pools have checked out Consumables, they will also be removed.</p>
+    {% endif %}
+{% endblock message_extra %}
