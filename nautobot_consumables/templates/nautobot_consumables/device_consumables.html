@@ -1,0 +1,8 @@
+{% extends 'dcim/device.html' %}
+{% load helpers %}
+
+{% block content %}
+    {% include 'nautobot_consumables/inc/bulk_edit_table.html' with table=table_checkedoutconsumables title="Checked Out Consumables" delete_icon="mdi-clipboard-text" delete_text="Check in Selected" delete_class="primary" disable_pagination=disable_pagination_checkedout %}
+
+    {% include 'nautobot_consumables/inc/bulk_edit_table.html' with table=table_consumablepools title="Available Consumable Pools" add_url="plugins:nautobot_consumables:consumablepool_add" add_querystring=add_querystring disable_pagination=disable_pagination_pools bulk_modify=False %}
+{% endblock %}

@@ -17,9 +17,11 @@
 """Views for the Nautobot Consumables app."""
 from django.contrib import messages
 from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
+from django.urls import reverse
+from nautobot.core.views import generic
 from nautobot.core.views.viewsets import NautobotUIViewSet
-from nautobot.dcim.models import Location
+from nautobot.dcim.models import Device, Location
 from nautobot.extras.models import CustomField
 
 from nautobot_consumables import filters, forms, models, tables
@@ -121,7 +123,6 @@ class ConsumablePoolViewSet(NautobotUIViewSet):
             if request.user.has_perm("nautobot_consumables.change_checkedoutconsumable"):
                 context["table_checkedoutconsumables"].columns.show("pk")
 
-            context["checkedoutconsumables_add_querystring"] = f"consumable_pool={instance.pk}"
             context["disable_pagination"] = len(context["table_checkedoutconsumables"].rows) <= 25
 
         if self.action == "update":
@@ -237,3 +238,71 @@ class ConsumableTypeViewSet(NautobotUIViewSet):
             return "nautobot_consumables/json_form.html"
 
         return super().get_template_name()
+
+
+class DeviceConsumablesViewTab(generic.ObjectView):
+    """View for adding a Consumables tab to Device details."""
+
+    queryset = Device.objects.all()
+    template_name = "nautobot_consumables/device_consumables.html"
+
+    def get_extra_context(self, request, instance):
+        """Gather extra context for the views."""
+        context = super().get_extra_context(request, instance)
+
+        context["table_checkedoutconsumables"] = tables.CheckedOutConsumableDetailDeviceTabTable(
+            models.CheckedOutConsumable.objects.filter(device__pk=instance.pk)
+        )
+        context["disable_pagination_checkedout"] = len(
+            context["table_checkedoutconsumables"].rows
+        ) <= 25
+
+        context["table_consumablepools"] = tables.ConsumablePoolDetailLocationTabTable(
+            models.ConsumablePool.objects.filter(location__pk=instance.location.pk)
+            .exclude(checked_out__device__pk=instance.pk)
+        )
+        context["disable_pagination_pools"] = len(context["table_consumablepools"].rows) <= 25
+
+        context["add_querystring"] = f"location={instance.location.pk}"
+
+        return_url = [reverse(
+            "plugins:nautobot_consumables:device_consumables_tab",
+            kwargs={"pk": instance.pk},
+        ), "tab=nautobot_consumables:1"]
+        context["return_url"] = "?".join(return_url)
+
+        return context
+
+
+class LocationConsumablesViewTab(generic.ObjectView):
+    """View for adding a Consumables tab to Location details."""
+
+    queryset = Location.objects.all()
+    template_name = "nautobot_consumables/location_consumables.html"
+
+    def get_extra_context(self, request, instance):
+        """Gather extra context for the views."""
+        context = super().get_extra_context(request, instance)
+
+        location_pools = models.ConsumablePool.objects.filter(location=instance.pk)
+        context["table_consumablepools"] = tables.ConsumablePoolDetailLocationTabTable(
+            location_pools
+        )
+        context["table_checkedoutconsumables"] = tables.CheckedOutConsumableDetailLocationTabTable(
+            models.CheckedOutConsumable.objects.filter(consumable_pool__in=location_pools)
+        )
+
+        context["add_querystring"] = f"location={instance.pk}"
+
+        context["disable_pagination_pools"] = len(context["table_consumablepools"].rows) <= 25
+        context["disable_pagination_checkedout"] = len(
+            context["table_checkedoutconsumables"].rows
+        ) <= 25
+
+        return_url = [reverse(
+            "plugins:nautobot_consumables:location_consumables_tab",
+            kwargs={"slug": instance.slug},
+        ), "tab=nautobot_consumables:1"]
+        context["return_url"] = "?".join(return_url)
+
+        return context

@@ -78,5 +78,5 @@
 {% endblock content_right_page %}
 
 {% block content_full_width_page %}
-    {% include "nautobot_consumables/inc/bulk_edit_table.html" with table=table_checkedoutconsumables title="Checked Out Consumables" add_url="plugins:nautobot_consumables:checkedoutconsumable_add" add_querystring=checkedoutconsumables_add_querystring bulk_edit_url="plugins:nautobot_consumables:checkedoutconsumable_bulk_edit" bulk_delete_url="plugins:nautobot_consumables:checkedoutconsumable_bulk_delete" delete_icon="mdi-clipboard-text" delete_text="Check in Selected" delete_class="default" disable_pagination=disable_pagination %}
+    {% include "nautobot_consumables/inc/bulk_edit_table.html" with table=table_checkedoutconsumables title="Checked Out Consumables" bulk_edit_url="plugins:nautobot_consumables:checkedoutconsumable_bulk_edit" bulk_delete_url="plugins:nautobot_consumables:checkedoutconsumable_bulk_delete" delete_icon="mdi-clipboard-text" delete_text="Check in Selected" delete_class="default" disable_pagination=disable_pagination %}
 {% endblock content_full_width_page %}

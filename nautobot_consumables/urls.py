@@ -15,6 +15,7 @@
 #
 
 """URL route mapping for the Nautobot Consumables app."""
+from django.urls import path
 from nautobot.core.views.routers import NautobotUIViewSetRouter
 
 from nautobot_consumables import views
@@ -26,4 +27,17 @@ router.register("consumables", views.ConsumableViewSet)
 router.register("consumable-pools", views.ConsumablePoolViewSet)
 router.register("consumable-types", views.ConsumableTypeViewSet)
 
-urlpatterns = router.urls
+urlpatterns = [
+    path(
+        "devices/<uuid:pk>/consumables",
+        views.DeviceConsumablesViewTab.as_view(),
+        name="device_consumables_tab",
+    ),
+    path(
+        "locations/<slug:slug>/consumables",
+        views.LocationConsumablesViewTab.as_view(),
+        name="location_consumables_tab",
+    ),
+]
+
+urlpatterns += router.urls
