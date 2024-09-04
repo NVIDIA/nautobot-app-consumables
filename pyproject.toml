@@ -34,6 +34,8 @@ nautobot = "^1.6.1"
 bandit = "^1.7.5"
 celery-types = "^0.20.0"
 coverage = "^7.2.7"
+django-debug-toolbar = "^4.1.0"
+django-slowtests = "^1.1.1"
 django-types = "^0.18.0"
 flake8 = "^6.0.0"
 flake8-bugbear = "^23.7.10"
@@ -52,23 +54,16 @@ types-jsonschema = "^4.19.0.3"
 types-toml = "^0.10.8.7"
 unittest-xml-reporting = "^3.2.0"
 
-[tool.poetry.group.localdev]
-optional = true
-
-[tool.poetry.group.localdev.dependencies]
-django-debug-toolbar = "^4.1.0"
-django-slowtests = "^1.1.1"
-
 [tool.poetry.group.docs]
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-mkdocs = "^1.5.3"
-mkdocs-include-markdown-plugin = "^6.0.4"
-mkdocs-material = "^9.5.0"
+mkdocs = "1.5.3"
+mkdocs-include-markdown-plugin = "6.0.4"
+mkdocs-material = "9.5.0"
 mkdocs-version-annotations = "1.0.0"
-mkdocstrings = "^0.22.0"
-mkdocstrings-python = "^1.5.2"
+mkdocstrings = "0.22.0"
+mkdocstrings-python = "1.5.2"
 
 [tool.pylint.main]
 analyse-fallback-blocks = "no"

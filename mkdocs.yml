@@ -2,7 +2,7 @@
 dev_addr: "127.0.0.1:8001"
 edit_uri: "edit/main/nautobot-app-consumables/docs"
 site_dir: "nautobot_consumables/static/nautobot_consumables/docs"
-site_name: "Nautobot Consumables"
+site_name: "Nautobot Consumables Documentation"
 site_url: "https://github.com/NVIDIA/nautobot-app-consumables"
 repo_url: "https://github.com/NVIDIA/nautobot-app-consumables"
 theme:
@@ -21,8 +21,6 @@ theme:
     - "search.suggest"
   favicon: "assets/favicon.ico"
   logo: "assets/nvidia-logo-vert-rgb-wht-for-screen.png"
-  icon:
-    repo: "fontawesome/brands/gitlab"
   palette:
     - media: "(prefers-color-scheme)"
       toggle:
@@ -78,3 +76,25 @@ watch:
 
 nav:
   - Introduction: "index.md"
+  - User Guide:
+      - Overview: "user/index.md"
+      - Model Details:
+          - Consumable Type: "models/consumabletype.md"
+          - Consumable: "models/consumable.md"
+          - Consumable Pool: "models/consumablepool.md"
+          - Checked Out Consumable: "models/checkedoutconsumable.md"
+  - Administrator Guide:
+      - Install: "admin/install.md"
+      - Upgrade: "admin/upgrade.md"
+      - Uninstall: "admin/uninstall.md"
+      - Release Notes:
+          - "admin/release_notes/index.md"
+          - v1.0: "admin/release_notes/version_1.0.md"
+  - Developer Guide:
+      - Contributing to the App: "dev/contributing.md"
+      - Development Environment: "dev/dev_env.md"
+      - Code Reference:
+          - "dev/code_reference/index.md"
+          - Package: "dev/code_reference/package.md"
+          - API: "dev/code_reference/api.md"
+          - Models: "dev/code_reference/models.md"
