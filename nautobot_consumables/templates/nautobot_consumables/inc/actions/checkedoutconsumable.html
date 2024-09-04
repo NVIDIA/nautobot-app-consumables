@@ -1,0 +1,10 @@
+{% if perms.nautobot_consumables.change_checkedoutconsumable %}
+<a href="{% url "plugins:nautobot_consumables:checkedoutconsumable_edit" record.pk %}?return_url={{ request.path }}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="btn btn-warning btn-xs" title="Update">
+    <i class="mdi mdi-pencil"></i> Update
+</a>
+{% endif %}
+{% if perms.nautobot_consumables.delete_checkedoutconsumable %}
+<a href="{% url "plugins:nautobot_consumables:checkedoutconsumable_delete" record.pk %}?return_url={{ request.path }}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="btn btn-default btn-xs" title="Check In">
+    <i class="mdi mdi-clipboard-text"></i> Check In
+</a>
+{% endif %}

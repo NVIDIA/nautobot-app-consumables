@@ -1,0 +1,17 @@
+{% load helpers %}
+
+{% if record.available_quantity > 0 and perms.nautobot_consumables.add_checkedoutconsumable %}
+<a href="{% url "plugins:nautobot_consumables:checkedoutconsumable_add" %}?consumable_pool={{ record.pk }}&return_url={{ request.path }}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="btn btn-info btn-xs" title="Check Out">
+    <i class="mdi mdi-clipboard-check-outline" aria-hidden="true"></i>
+</a>
+{% endif %}
+{% if perms.nautobot_consumables.change_consumablepool %}
+<a href="{% url "plugins:nautobot_consumables:consumablepool_edit" record.pk %}?return_url={{ request.path }}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="btn btn-warning btn-xs" title="Update">
+    <i class="mdi mdi-pencil" aria-hidden="true"></i>
+</a>
+{% endif %}
+{% if perms.nautobot_consumables.delete_consumablepool %}
+<a href="{% url "plugins:nautobot_consumables:consumablepool_delete" record.pk %}?return_url={{ request.path }}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="btn btn-danger btn-xs" title="Delete">
+    <i class="mdi mdi-trash-can-outline" aria-hidden="true"></i>
+</a>
+{% endif %}

@@ -168,6 +168,11 @@ class ConsumableBulkEditForm(NautobotBulkEditForm, TagsBulkEditFormMixin):
         widget=forms.MultipleHiddenInput,
     )
 
+    manufacturer = DynamicModelMultipleChoiceField(
+        queryset=Manufacturer.objects.all(),
+        required=False,
+    )
+
     class Meta:
         """ConsumableBulkEditForm model options."""
 

@@ -1,0 +1,3 @@
+{% if permissions.change %}
+<a href="{% url 'plugins:nautobot_consumables:consumablepool_edit' record.pk %}?return_url={{ request.path }}" class="btn btn-warning btn-xs" title="Update"><i class="mdi mdi-pencil"></i> Update</a>
+{% endif %}
