@@ -100,7 +100,9 @@ def create_devices(locations: list[Location]):
         )
 
 
-def create_consumables(manufacturers: list[Manufacturer] | None = None):
+def create_consumables(
+    manufacturers: list[Manufacturer] | None = None
+) -> list[list[models.Consumable]]:
     """Add test Consumables instances."""
     colors = ColorChoices.as_dict()
 
@@ -113,17 +115,18 @@ def create_consumables(manufacturers: list[Manufacturer] | None = None):
     if manufacturers is None:
         manufacturers = create_manufacturers()
 
+    consumables: list[list[models.Consumable]] = []
     for num in range(1, 6):
         mfgr = manufacturers[num - 1]
 
-        _ = models.Consumable.objects.get_or_create(
+        generic, _ = models.Consumable.objects.get_or_create(
             name=f"Generic {num}",
             manufacturer=mfgr,
             product_id=f"generic_00{num}",
             consumable_type=generic_consumable,
         )
 
-        _ = models.Consumable.objects.get_or_create(
+        cable, _ = models.Consumable.objects.get_or_create(
             name=f"Cable {num}",
             manufacturer=mfgr,
             product_id=f"cable_00{num}",
@@ -137,7 +140,7 @@ def create_consumables(manufacturers: list[Manufacturer] | None = None):
             },
         )
 
-        _ = models.Consumable.objects.get_or_create(
+        transceiver, _ = models.Consumable.objects.get_or_create(
             name=f"Transceiver {num}",
             manufacturer=mfgr,
             product_id=f"transceiver_00{num}",
@@ -147,6 +150,32 @@ def create_consumables(manufacturers: list[Manufacturer] | None = None):
                 "form_factor": "QSFP-DD (400GE)",
             },
         )
+
+        consumables.append([generic, cable, transceiver])
+
+    return consumables
+
+
+def create_consumable_pools(consumables: list[list[models.Consumable]], locations: list[Location]):
+    """Add test ConsumablePools instances."""
+    for num in range(1, 6):
+        index = num - 1
+        for consumable_num, consumable in enumerate(consumables[index], 1):
+            pool, _ = models.ConsumablePool.objects.get_or_create(
+                name=f"{consumable.name} Pool 1",
+                consumable=consumable,
+                location=locations[index],
+                quantity=num * consumable_num * 13,
+            )
+
+            if num > 3:
+                continue
+
+            models.CheckedOutConsumable.objects.get_or_create(
+                consumable_pool=pool,
+                device=Device.objects.filter(location=locations[num - 1]).first(),
+                quantity=pool.quantity / 2,
+            )
 
 
 def create_env():
@@ -169,4 +198,7 @@ def create_env():
     create_devices(locations)
 
     print(" - Consumables")
-    create_consumables(manufacturers)
+    consumables = create_consumables(manufacturers)
+
+    print(" - Consumable Pools")
+    create_consumable_pools(consumables, locations)

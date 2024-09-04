@@ -79,6 +79,7 @@ def post_migrate_create_defaults(sender, apps, **kwargs):  # pylint: disable=W06
     cable_schema = {
         "type": "object",
         "title": "Cable Details",
+        "required": ["cable_type", "connector", "length", "length_unit", "color"],
         "properties": {
             "cable_type": create_json_schema_type("Cable Type", CableTypeChoices.as_dict(), 10),
             "connector": create_json_schema_type("Connector", PortTypeChoices.as_dict(), 20),

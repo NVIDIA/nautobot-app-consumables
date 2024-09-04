@@ -75,7 +75,7 @@ class JSONModel(PrimaryModel):
 
         # Find any properties named "*_unit" and combine their values with the corresponding
         # property value, e.g. `length = 1` and `length_unit = "ft"` combine to `1 ft`
-        for unit_key in [key for key in self.schema if key.endswith("unit")]:
+        for unit_key in [key for key in self.schema.get("properties", {}) if key.endswith("unit")]:
             prop = unit_key.strip("_unit")
             if self.schema.get("properties", {}).get(prop):
                 details[prop]["value"] = f"{self.data.get(prop)}{self.data.get(unit_key)}"
@@ -104,11 +104,12 @@ class JSONModel(PrimaryModel):
                         format_checker=draft4_format_checker
                     ).validate(self.data)
                 except JSONSchemaValidationError as error:
-                    path = "']['".join(error.path)
-                    raise ValidationError(
-                        f"Data validation against schema schema failed: "
-                        f"{error.message} on ['{path}']"
-                    ) from error
+                    message = [f"Data validation against schema schema failed: {error.message}"]
+                    if error.path:
+                        sep = "']['"
+                        message.extend(["on", f"['{sep.join(error.path)}']"])
+
+                    raise ValidationError(" ".join(message)) from error
 
 
 class ConsumableType(JSONModel):
@@ -189,25 +190,39 @@ class Consumable(JSONModel):
 
     def clean(self):
         """Validate a Consumable instance."""
-        super().clean()
-
         if self.present_in_database:
             obj = self.__class__.objects.get(pk=self.pk)
             if self.consumable_type != obj.consumable_type:
                 raise ValidationError(
                     "ConsumableType cannot be changed after creation."
                 )
+        else:
+            # If this is a new Consumable, copy the schema from its ConsumableType
+            self.schema = self.consumable_type.schema
+
+        super().clean()
 
     def save(self, *args, **kwargs):
         """Save the Consumable instance to the database."""
         # If this is a new Consumable, copy the schema from its ConsumableType
         if not self.present_in_database:
-            self.schema = self.consumable_type.schema
+            if self.schema is None:
+                self.schema = self.consumable_type.schema
         else:
             # Make sure ConsumableType does not change
             self.consumable_type = self.__class__.objects.get(pk=self.pk).consumable_type
 
         super().save(*args, **kwargs)
+
+    def to_csv(self) -> tuple[str, ...]:
+        """Return a tuple of model values suitable for exporting to CSV."""
+        return (
+            self.name,
+            self.consumable_type.name,
+            self.manufacturer.name,
+            self.product_id,
+            self.data,
+        )
 
 
 @extras_features("custom_fields", "custom_links", "graphql", "relationships")
@@ -277,6 +292,15 @@ class ConsumablePool(PrimaryModel):
                     "Consumable cannot be changed after creation."
                 )
 
+    def to_csv(self) -> tuple[str, str, str, int]:
+        """Return a tuple of model values suitable for exporting to CSV."""
+        return (
+            self.name,
+            self.consumable.name,
+            self.location.name,
+            self.quantity,
+        )
+
 
 @extras_features("custom_fields", "custom_links", "graphql", "relationships")
 class CheckedOutConsumable(PrimaryModel):
@@ -318,12 +342,12 @@ class CheckedOutConsumable(PrimaryModel):
         """Calculate the absolute URL of a CheckedOutConsumable instance."""
         return reverse("plugins:nautobot_consumables:checkedoutconsumable", kwargs={"pk": self.pk})
 
-    def to_csv(self) -> tuple[str, ...]:
+    def to_csv(self) -> tuple[str, str, int]:
         """Return a tuple of model values suitable for exporting to CSV."""
         return (
             self.device.name,
             self.consumable_pool.name,
-            str(self.quantity),
+            self.quantity,
         )
 
     def clean(self):
