@@ -385,10 +385,64 @@ def post_upgrade(context: Context) -> None:
     helpers.run_command(context, "nautobot-server post_upgrade")
 
 
-@task
-def create_env(context: Context) -> None:
+@task(
+    help={
+        "seed": "String to use as a random generator seed for reproducible results.",
+        "cache-fixtures": "Save the generated test data to a json fixture file to re-use if "
+                          "the fixture file is not found, load the previously generated test "
+                          "data from the fixture file if it exists (implies the --flush option).",
+        "fixture-file": "Fixture file to use with --cache-fixtures, default is "
+                        "`development/factory_dump.json",
+        "flush": "Flush any existing data in the database before generating new data.",
+        "no-input": "Do not prompt for input or confirmation.",
+        "database": "The database to use when populating the data, defaults to the"
+                    " `default` database."
+    }
+)
+def create_env(context: Context, seed: str | None = None, cache_fixtures: bool = False,
+               fixture_file: str | None = None, flush: bool = False, no_input: bool = False,
+               database: str | None = None) -> None:
     """Add a base set of data to Nautobot to make development easier."""
-    helpers.run_command(context, "nautobot-server create_consumables_env")
+    command = ["nautobot-server", "create_consumables_env"]
+
+    if flush:
+        command.append("--flush")
+
+    if no_input:
+        command.append("--no-input")
+
+    if seed is not None:
+        command.extend(["--seed", seed])
+
+    if cache_fixtures:
+        command.append("--cache-fixtures")
+        if fixture_file is not None:
+            command.extend(["--fixture-file", fixture_file])
+
+    if database is not None:
+        command.append(f"--database={database}")
+
+    helpers.run_command(context, " ".join(command))
+
+
+@task(
+    help={
+        "no-input": "Do not prompt for input or confirmation.",
+        "database": "The database to flush, defaults to the `default` database."
+    }
+)
+def flush_env(context: Context, no_input: bool = False, database: str | None = None) -> None:
+    """Clear all Nautobot data."""
+    command = ["nautobot-server", "flush_consumables_env"]
+
+    if no_input:
+        command.append("--no-input")
+
+    if database is not None:
+        command.append(f"--database={database}")
+
+    helpers.run_command(context, " ".join(command))
+
 
 @task(
     help={

@@ -72,7 +72,7 @@ def docker_compose(context: Context, command: str, **kwargs: Any) -> Result:
         build_env.update(env_vars)
 
     compose_command = [
-        "docker-compose",
+        "docker compose",
         f"--project-name {context.nautobot_consumables.project_name}",
         f"--project-directory {context.nautobot_consumables.compose_dir}",
     ]
@@ -84,7 +84,7 @@ def docker_compose(context: Context, command: str, **kwargs: Any) -> Result:
 
     compose_command.append(command)
 
-    print(f'Running docker-compose command "{command}"')
+    print(f'Running docker compose command "{command}"')
     return context.run(" ".join(compose_command), env=build_env, **kwargs)
 
 

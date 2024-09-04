@@ -138,6 +138,9 @@ def bandit(context: Context) -> None:
 @task(
     help={
         "keepdb": "Save and re-use test database between test runs for faster re-testing.",
+        "seed": "String to use as a random generator seed for reproducible results. If --keepdb is"
+                "given and --seed is not, a default seed will be used.",
+        "flush": "Flush database before running tests.",
         "label": "Specify a directory or module to test instead of running all Nautobot tests. "
                  "Default is 'nautobot_consumables`.",
         "failfast": "Fail as soon as a single test fails don't run the entire test suite",
@@ -147,9 +150,9 @@ def bandit(context: Context) -> None:
         "report-file": "Filename to save the XML test report to, default is 'rspec.xml'.",
     }
 )
-def unittests(context: Context, keepdb: bool = False, label: str = "nautobot_consumables",
-              failfast: bool = False, buffer: bool = True, verbose: bool = False,
-              append: bool = False, report_file: str | None = None) -> None:
+def unittests(context: Context, keepdb: bool = False, seed: str | None = None, flush: bool = False,
+              label: str = "nautobot_consumables", failfast: bool = False, buffer: bool = True,
+              verbose: bool = False, append: bool = False, report_file: str | None = None) -> None:
     """Run the plugin tests with coverage."""
     command = ["coverage run"]
     if append:
@@ -159,6 +162,10 @@ def unittests(context: Context, keepdb: bool = False, label: str = "nautobot_con
 
     if keepdb:
         command.append("--keepdb")
+    if seed is not None:
+        command.extend(["--seed", seed])
+    if flush:
+        command.append("--flush")
     if failfast:
         command.append("--failfast")
     if buffer:
@@ -189,10 +196,14 @@ def coverage(context: Context, covered: bool = False) -> None:
 @task(
     help={
         "keepdb": "Save and re-use test database between test runs for faster re-testing.",
+        "seed": "String to use as a random generator seed for reproducible results. If --keepdb is"
+                "given and --seed is not, a default seed will be used.",
+        "flush": "Flush database before running tests.",
         "verbose": "Enable verbose output for lint and test commands.",
     }
 )
-def everything(context: Context, keepdb: bool = False, verbose: bool = False) -> None:
+def everything(context: Context, keepdb: bool = False, seed: str | None = None,
+               flush: bool = False, verbose: bool = False) -> None:
     """Run all the linters and pytest with coverage."""
     print("Running pylint...")
     pylint(context, verbose=verbose)
@@ -201,22 +212,22 @@ def everything(context: Context, keepdb: bool = False, verbose: bool = False) ->
     print("\nRunning flake8...")
     flake8(context, verbose=verbose)
 
-    print("\n", ("-" * 70), "\n")
+    print(f"\n{('-' * 70)}\n")
     print("Running pydocstyle...")
     pydocstyle(context, verbose=verbose)
 
-    print("\n", ("-" * 70), "\n")
+    print(f"\n{('-' * 70)}\n")
     print("Running mypy...")
     mypy(context, verbose=verbose)
 
-    print("\n", ("-" * 70), "\n")
+    print(f"\n{('-' * 70)}\n")
     print("Running bandit...")
     bandit(context)
 
-    print("\n", ("-" * 70), "\n")
+    print(f"\n{('-' * 70)}\n")
     print("Running tests...")
-    unittests(context, keepdb=keepdb, verbose=verbose)
+    unittests(context, keepdb=keepdb, seed=seed, flush=flush, verbose=verbose)
 
-    print("\n", ("-" * 70), "\n")
+    print(f"\n{('-' * 70)}\n")
     print("Generating coverage report...")
     coverage(context)
