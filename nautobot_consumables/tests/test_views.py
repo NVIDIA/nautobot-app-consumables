@@ -18,9 +18,11 @@
 from copy import copy
 import json
 
+from django.contrib.contenttypes.models import ContentType
 from django.test.utils import override_settings
 from nautobot.dcim.models import Device, Location, Manufacturer
-from nautobot.utilities.testing import ViewTestCases
+from nautobot.users.models import ObjectPermission
+from nautobot.utilities.testing import ViewTestCases, extract_page_body
 
 from nautobot_consumables import models
 
@@ -122,6 +124,43 @@ class ConsumableViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             f"Test Consumable 7,{generic.pk},{manufacturer.pk},test07",
         )
 
+    @override_settings(EXEMPT_VIEW_PERMISSIONS=[])
+    def test_get_object_with_change_consumablepool_permission(self):
+        """Test the detail view with change_consumablepool permissions."""
+        instance = self._get_queryset().first()
+
+        # Add model-level permission
+        obj_perm = ObjectPermission(name="Test permission", actions=["view", "change"])
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(ContentType.objects.get_for_model(self.model))
+
+        response = self.client.get(instance.get_absolute_url())
+        self.assertHttpStatus(response, 200)
+
+        response_body = extract_page_body(response.content.decode(response.charset))
+        # Without change_consumablepool permission, the Consumable Pools table won't show the pk
+        # column, and the header will not have a toggle all checkbox.
+        self.assertNotIn(
+            'input type="checkbox" class="toggle" title="Toggle all"',
+            response_body,
+            msg=response_body
+        )
+
+        obj_perm.object_types.add(ContentType.objects.get_for_model(models.ConsumablePool))
+
+        response = self.client.get(instance.get_absolute_url())
+        self.assertHttpStatus(response, 200)
+
+        response_body = extract_page_body(response.content.decode(response.charset))
+        # With change_consumablepool permission, the Consumable Pools table will show the pk
+        # column, and the header will have a toggle all checkbox.
+        self.assertIn(
+            'input type="checkbox" class="toggle" title="Toggle all"',
+            response_body,
+            msg=response_body
+        )
+
     @override_settings(EXEMPT_VIEW_PERMISSIONS=["*"])
     def test_edit_object_with_permission(self):
         """Handle the form idiosyncracies."""
@@ -173,6 +212,43 @@ class ConsumablePoolViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             f"Test Pool 3,{consumable.pk},{location.pk},99",
         )
 
+    @override_settings(EXEMPT_VIEW_PERMISSIONS=[])
+    def test_get_object_with_change_checkedoutconsumable_permission(self):
+        """Test the detail view with change_checkedoutconsumable permissions."""
+        instance = self._get_queryset().first()
+
+        # Add model-level permission
+        obj_perm = ObjectPermission(name="Test permission", actions=["view", "change"])
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(ContentType.objects.get_for_model(self.model))
+
+        response = self.client.get(instance.get_absolute_url())
+        self.assertHttpStatus(response, 200)
+
+        response_body = extract_page_body(response.content.decode(response.charset))
+        # Without change_checkedoutconsumable permission, the Checked Out Consumables table won't
+        # show the pk column, and the header will not have a toggle all checkbox.
+        self.assertNotIn(
+            'input type="checkbox" class="toggle" title="Toggle all"',
+            response_body,
+            msg=response_body
+        )
+
+        obj_perm.object_types.add(ContentType.objects.get_for_model(models.CheckedOutConsumable))
+
+        response = self.client.get(instance.get_absolute_url())
+        self.assertHttpStatus(response, 200)
+
+        response_body = extract_page_body(response.content.decode(response.charset))
+        # With change_checkedoutconsumable permission, the Checked Out Consumables table will
+        # show the pk column, and the header will have a toggle all checkbox.
+        self.assertIn(
+            'input type="checkbox" class="toggle" title="Toggle all"',
+            response_body,
+            msg=response_body
+        )
+
 
 class ConsumableTypeViewTestCase(
     ViewTestCases.GetObjectViewTestCase,
@@ -206,3 +282,40 @@ class ConsumableTypeViewTestCase(
         _ = models.ConsumableType.objects.create(name="Test Consumable 1")
         _ = models.ConsumableType.objects.create(name="Test Consumable 2")
         _ = models.ConsumableType.objects.create(name="Test Consumable 3")
+
+    @override_settings(EXEMPT_VIEW_PERMISSIONS=[])
+    def test_get_object_with_change_consumable_permission(self):
+        """Test the detail view with change_cconsumable permissions."""
+        instance = self._get_queryset().first()
+
+        # Add model-level permission
+        obj_perm = ObjectPermission(name="Test permission", actions=["view", "change"])
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(ContentType.objects.get_for_model(self.model))
+
+        response = self.client.get(instance.get_absolute_url())
+        self.assertHttpStatus(response, 200)
+
+        response_body = extract_page_body(response.content.decode(response.charset))
+        # Without change_consumable permission, the Consumables table won't show the pk column, and
+        # the header will not have a toggle all checkbox.
+        self.assertNotIn(
+            'input type="checkbox" class="toggle" title="Toggle all"',
+            response_body,
+            msg=response_body
+        )
+
+        obj_perm.object_types.add(ContentType.objects.get_for_model(models.Consumable))
+
+        response = self.client.get(instance.get_absolute_url())
+        self.assertHttpStatus(response, 200)
+
+        response_body = extract_page_body(response.content.decode(response.charset))
+        # With change_consumable permission, the Consumables table will show the pk column, and the
+        # header will have a toggle all checkbox.
+        self.assertIn(
+            'input type="checkbox" class="toggle" title="Toggle all"',
+            response_body,
+            msg=response_body
+        )
