@@ -28,7 +28,7 @@ from nautobot_consumables import filters, forms, models, tables
 from nautobot_consumables.api import serializers
 
 
-class CheckedOutConsumableViewSet(NautobotUIViewSet):
+class CheckedOutConsumableUIViewSet(NautobotUIViewSet):
     """UI view set for CheckedOutConsumables."""
 
     action_buttons = ("export",)
@@ -57,7 +57,7 @@ class CheckedOutConsumableViewSet(NautobotUIViewSet):
         return context
 
 
-class ConsumableViewSet(NautobotUIViewSet):
+class ConsumableUIViewSet(NautobotUIViewSet):
     """UI view set for Consumables."""
 
     bulk_create_form_class = forms.ConsumableCSVForm
@@ -99,7 +99,7 @@ class ConsumableViewSet(NautobotUIViewSet):
         return str(super().get_template_name())
 
 
-class ConsumablePoolViewSet(NautobotUIViewSet):
+class ConsumablePoolUIViewSet(NautobotUIViewSet):
     """UI view set for ConsumablePools."""
 
     bulk_create_form_class = forms.ConsumablePoolCSVForm
@@ -209,7 +209,7 @@ class ConsumablePoolViewSet(NautobotUIViewSet):
         self.success_url = self.get_return_url(request)
 
 
-class ConsumableTypeViewSet(NautobotUIViewSet):
+class ConsumableTypeUIViewSet(NautobotUIViewSet):
     """UI view set for ConsumableTypes."""
 
     bulk_create_form_class = forms.ConsumableTypeCSVForm

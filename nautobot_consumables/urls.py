@@ -22,10 +22,10 @@ from nautobot_consumables import views
 
 router = NautobotUIViewSetRouter()
 
-router.register("checked-out-consumables", views.CheckedOutConsumableViewSet)
-router.register("consumables", views.ConsumableViewSet)
-router.register("consumable-pools", views.ConsumablePoolViewSet)
-router.register("consumable-types", views.ConsumableTypeViewSet)
+router.register("checked-out-consumables", views.CheckedOutConsumableUIViewSet)
+router.register("consumables", views.ConsumableUIViewSet)
+router.register("consumable-pools", views.ConsumablePoolUIViewSet)
+router.register("consumable-types", views.ConsumableTypeUIViewSet)
 
 urlpatterns = [
     path(
