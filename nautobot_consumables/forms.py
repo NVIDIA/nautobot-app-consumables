@@ -77,6 +77,13 @@ class CheckedOutConsumableBulkEditForm(NautobotBulkEditForm, TagsBulkEditFormMix
         widget=forms.MultipleHiddenInput,
     )
 
+    device = DynamicModelChoiceField(
+        queryset=Device.objects.all(),
+        required=False,
+    )
+
+    quantity = forms.IntegerField(min_value=1, required=False)
+
     class Meta:
         """CheckedOutConsumableBulkEditForm model options."""
 
@@ -168,7 +175,7 @@ class ConsumableBulkEditForm(NautobotBulkEditForm, TagsBulkEditFormMixin):
         widget=forms.MultipleHiddenInput,
     )
 
-    manufacturer = DynamicModelMultipleChoiceField(
+    manufacturer = DynamicModelChoiceField(
         queryset=Manufacturer.objects.all(),
         required=False,
     )
@@ -232,6 +239,7 @@ class ConsumablePoolBulkEditForm(NautobotBulkEditForm, TagsBulkEditFormMixin):
     )
 
     location = DynamicModelChoiceField(queryset=Location.objects.all(), required=False)
+    quantity = forms.IntegerField(min_value=1, required=False)
 
     class Meta:
         """ConsumablePoolBulkEditForm model options."""
