@@ -154,6 +154,12 @@ cache_dir = ".cache/pytest_cache"
 
 [tool.coverage.report]
 show_missing = true
+include = ["nautobot_consumables/*"]
+omit = [
+    "nautobot_consumables/management/*",
+    "nautobot_consumables/migrations/*",
+    "nautobot_consumables/tests/*",
+]
 
 [tool.coverage.xml]
 output = "coverage.xml"

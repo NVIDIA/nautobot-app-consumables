@@ -182,8 +182,6 @@ def coverage(context: Context, covered: bool = False) -> None:
     command = ["coverage report"]
     if not covered:
         command.append("--skip-covered")
-    command.append("--include=nautobot_consumables/*")
-    command.append("--omit=nautobot_consumables/tests/*,nautobot_consumables/migrations/*")
 
     helpers.run_command(context, " ".join(command))
 
