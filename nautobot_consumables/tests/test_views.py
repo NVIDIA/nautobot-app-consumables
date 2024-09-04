@@ -25,7 +25,17 @@ from nautobot.utilities.testing import ViewTestCases
 from nautobot_consumables import models
 
 
-class CheckedOutConsumableViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
+class CheckedOutConsumableViewTestCase(
+    ViewTestCases.GetObjectViewTestCase,
+    ViewTestCases.GetObjectChangelogViewTestCase,
+    ViewTestCases.GetObjectNotesViewTestCase,
+    ViewTestCases.CreateObjectViewTestCase,
+    ViewTestCases.EditObjectViewTestCase,
+    ViewTestCases.DeleteObjectViewTestCase,
+    ViewTestCases.ListObjectsViewTestCase,
+    ViewTestCases.BulkEditObjectsViewTestCase,
+    ViewTestCases.BulkDeleteObjectsViewTestCase,
+):
     """Tests for the CheckedOutConsumable model views."""
 
     model = models.CheckedOutConsumable

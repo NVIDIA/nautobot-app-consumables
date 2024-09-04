@@ -15,18 +15,11 @@
 #
 
 """Tests for models defined by the Consumables app."""
-from time import sleep
-
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from nautobot.dcim.models import Device, Location, Manufacturer
-from nautobot.extras.choices import CustomFieldTypeChoices
-from nautobot.extras.models import CustomField, Status
-from nautobot.tenancy.models import Tenant
 
 from nautobot_consumables import models
-from nautobot_consumables.tests.fixtures import create_env
 
 
 class ConsumableTypeTestCase(TestCase):
@@ -227,9 +220,10 @@ class CheckedOutConsumableTestCase(TestCase):
     def setUpTestData(cls):
         """Set up the base test data."""
         pool = models.ConsumablePool.objects.get(name="Cable 1 Pool 1")
+        cls.device = Device.objects.filter(location=pool.location).last()
         cls.checked_out_consumable = models.CheckedOutConsumable(
             consumable_pool=pool,
-            device=Device.objects.filter(location=pool.location).last(),
+            device=cls.device,
             quantity=5,
         )
 
@@ -241,13 +235,14 @@ class CheckedOutConsumableTestCase(TestCase):
     def test_instance_name(self):
         """Test the string representation of the model."""
         new_checked_out_consumable = models.CheckedOutConsumable()
+        new_device = Device.objects.first()
 
         with self.subTest(check="empty"):
             self.assertEqual(f"{new_checked_out_consumable}", "No Device | No Pool")
 
         with self.subTest(check="device_only"):
-            new_checked_out_consumable.device = Device.objects.first()
-            self.assertEqual(f"{new_checked_out_consumable}", "Device 1-1 | No Pool")
+            new_checked_out_consumable.device = new_device
+            self.assertEqual(f"{new_checked_out_consumable}", f"{new_device.name} | No Pool")
 
         with self.subTest(check="pool_only"):
             new_checked_out_consumable.device = None
@@ -257,11 +252,16 @@ class CheckedOutConsumableTestCase(TestCase):
             self.assertEqual(f"{new_checked_out_consumable}", "No Device | Generic 1 Pool 1")
 
         with self.subTest(check="complete"):
-            self.assertEqual(f"{self.checked_out_consumable}", "Device 1-2 | Cable 1 Pool 1")
+            self.assertEqual(
+                f"{self.checked_out_consumable}",
+                f"{self.device.name} | Cable 1 Pool 1"
+            )
 
     def test_invalid_device(self):
         """Test checking out to a Device in a different location."""
-        device = Device.objects.filter(location=Location.objects.last()).first()
+        device = Device.objects.exclude(
+            location=self.checked_out_consumable.device.location,
+        ).first()
         self.checked_out_consumable.device = device
         with self.assertRaises(ValidationError) as context:
             self.checked_out_consumable.validated_save()

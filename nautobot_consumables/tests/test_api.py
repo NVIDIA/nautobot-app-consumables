@@ -34,20 +34,24 @@ class CheckedOutConsumableAPITestCase(APIViewTestCases.APIViewTestCase):
     @classmethod
     def setUpTestData(cls):
         """Set up data for the tests."""
+        cable_pool = models.ConsumablePool.objects.get(name="Cable 5 Pool 1")
+        transceiver_pool = models.ConsumablePool.objects.get(name="Transceiver 5 Pool 1")
+        generic_pool = models.ConsumablePool.objects.get(name="Generic 5 Pool 1")
+
         cls.create_data = [
             {
-                "consumable_pool": models.ConsumablePool.objects.get(name="Cable 5 Pool 1").pk,
-                "device": Device.objects.get(name="Device 5-1").pk,
+                "consumable_pool": cable_pool.pk,
+                "device": Device.objects.filter(location=cable_pool.location).first().pk,
                 "quantity": 10,
             },
             {
-                "consumable_pool": models.ConsumablePool.objects.get(name="Transceiver 5 Pool 1").pk,
-                "device": Device.objects.get(name="Device 5-1").pk,
+                "consumable_pool": transceiver_pool.pk,
+                "device": Device.objects.filter(location=transceiver_pool.location).first().pk,
                 "quantity": 10,
             },
             {
-                "consumable_pool": models.ConsumablePool.objects.get(name="Generic 5 Pool 1").pk,
-                "device": Device.objects.get(name="Device 5-1").pk,
+                "consumable_pool": generic_pool.pk,
+                "device": Device.objects.filter(location=generic_pool.location).first().pk,
                 "quantity": 10,
             },
         ]
@@ -68,7 +72,7 @@ class ConsumableAPITestCase(APIViewTestCases.APIViewTestCase):
         models.Consumable.objects.create(
             name="Test Cable",
             manufacturer=Manufacturer.objects.first(),
-            product_id=f"test_cable_001",
+            product_id="test_cable_001",
             consumable_type=models.ConsumableType.objects.get(name="Cable"),
             data={
                 "color": "ffc107",
@@ -81,14 +85,14 @@ class ConsumableAPITestCase(APIViewTestCases.APIViewTestCase):
         models.Consumable.objects.create(
             name="Test Transceiver",
             manufacturer=Manufacturer.objects.first(),
-            product_id=f"test_transceiver_001",
+            product_id="test_transceiver_001",
             consumable_type=models.ConsumableType.objects.get(name="Transceiver"),
             data={"reach": "LR", "form_factor": "QSFP-DD (400GE)"}
         )
         models.Consumable.objects.create(
             name="Test Generic",
             manufacturer=Manufacturer.objects.first(),
-            product_id=f"test_generic_001",
+            product_id="test_generic_001",
             consumable_type=models.ConsumableType.objects.get(name="Generic"),
         )
 
@@ -197,4 +201,3 @@ class ConsumableTypeAPITestCase(APIViewTestCases.APIViewTestCase):
         models.ConsumableType.objects.create(name="Test Consumable Type 1", schema={})
         models.ConsumableType.objects.create(name="Test Consumable Type 2", schema={})
         models.ConsumableType.objects.create(name="Test Consumable Type 3", schema={})
-

@@ -15,7 +15,6 @@
 #
 
 """Tests for filters defined in the Nautobot Consumables app."""
-from nautobot.dcim.models import Device, Location, Manufacturer
 from nautobot.utilities.testing import FilterTestCases
 
 from nautobot_consumables import filters, models
@@ -34,7 +33,8 @@ class CheckedOutConsumableFilterSetTestCase(FilterTestCases.FilterTestCase):
 
     def test_device(self):
         """Test filtering on device field."""
-        params = {"device": Device.objects.get(name="Device 1-1")}
+        consumable = models.CheckedOutConsumable.objects.get(consumable_pool__name="Cable 1 Pool 1")
+        params = {"device": consumable.device}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
     def test_quantity(self):
@@ -61,8 +61,9 @@ class CheckedOutConsumableFilterSetTestCase(FilterTestCases.FilterTestCase):
 
     def test_search_filter(self):
         """Test the SearchFilter."""
+        consumable = models.CheckedOutConsumable.objects.first()
         with self.subTest(filter="id"):
-            params = {"q": models.CheckedOutConsumable.objects.first().pk}
+            params = {"q": consumable.pk}
             self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
         with self.subTest(filter="pool"):
@@ -70,7 +71,7 @@ class CheckedOutConsumableFilterSetTestCase(FilterTestCases.FilterTestCase):
             self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
         with self.subTest(filter="device"):
-            params = {"q": "Device 1-1"}
+            params = {"q": consumable.device.name}
             self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
 
@@ -92,7 +93,8 @@ class ConsumableFilterSetTestCase(FilterTestCases.FilterTestCase):
 
     def test_manufacturer(self):
         """Test filtering on the manufacturer field."""
-        params = {"manufacturer": Manufacturer.objects.first()}
+        consumable = models.Consumable.objects.get(name="Cable 1")
+        params = {"manufacturer": consumable.manufacturer}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
     def test_product_id(self):
@@ -115,7 +117,8 @@ class ConsumableFilterSetTestCase(FilterTestCases.FilterTestCase):
             self.assertEqual(self.filterset(params, self.queryset).qs.count(), 5)
 
         with self.subTest(filter="manufacturer"):
-            params = {"q": "Manufacturer 1"}
+            consumable = models.Consumable.objects.get(name="Cable 1")
+            params = {"q": consumable.manufacturer.name}
             self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
         with self.subTest(filter="product_id"):
@@ -141,8 +144,10 @@ class ConsumablePoolFilterSetTestCase(FilterTestCases.FilterTestCase):
 
     def test_location(self):
         """Test filtering on the location field."""
-        params = {"location": Location.objects.first()}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+        pool = models.ConsumablePool.objects.get(name="Cable 1 Pool 1")
+        in_location = self.filterset({"location": pool.location}, self.queryset).qs
+        not_in_location = self.filterset({"location__n": pool.location}, self.queryset).qs
+        self.assertEqual(in_location.count() + not_in_location.count(), self.queryset.all().count())
 
     def test_quantity(self):
         """Test filtering on the quantity field."""
@@ -181,8 +186,13 @@ class ConsumablePoolFilterSetTestCase(FilterTestCases.FilterTestCase):
             self.assertEqual(self.filterset(params, self.queryset).qs.count(), 5)
 
         with self.subTest(filter="location"):
-            params = {"q": "Location 1"}
-            self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+            pool = models.ConsumablePool.objects.get(name="Cable 1 Pool 1")
+            in_location = self.filterset({"q": pool.location.name}, self.queryset).qs
+            not_in_location = self.filterset({"location__n": pool.location}, self.queryset).qs
+            self.assertEqual(
+                in_location.count(),
+                self.queryset.all().count() - not_in_location.count()
+            )
 
 
 class ConsumableTypeFilterSetTestCase(FilterTestCases.FilterTestCase):

@@ -99,9 +99,10 @@ def create_consumables() -> list[list[models.Consumable]]:
 
 def create_consumable_pools(consumables: list[list[models.Consumable]]):
     """Add test ConsumablePools instances."""
+    used_devices: list[str] = []
     for num in range(1, 6):
         index = num - 1
-        device = factory.random.randgen.choice(Device.objects.all())
+        device = factory.random.randgen.choice(Device.objects.exclude(id__in=used_devices))
 
         for consumable_num, consumable in enumerate(consumables[index], 1):
             pool, _ = models.ConsumablePool.objects.get_or_create(
@@ -119,6 +120,8 @@ def create_consumable_pools(consumables: list[list[models.Consumable]]):
                 device=device,
                 quantity=pool.quantity / 2,
             )
+
+        used_devices.append(device.id)
 
 
 def create_env(seed: str | None = None):

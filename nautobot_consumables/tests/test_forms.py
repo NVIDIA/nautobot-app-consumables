@@ -18,9 +18,6 @@
 import json
 
 from nautobot.dcim.models import Device, Location, Manufacturer
-from nautobot.extras.choices import CustomFieldTypeChoices
-from nautobot.extras.forms import NautobotBulkEditForm, NautobotFilterForm
-from nautobot.utilities.forms.fields import ExpandableNameField, JSONField
 from nautobot.utilities.testing import TestCase
 
 from nautobot_consumables import forms, models

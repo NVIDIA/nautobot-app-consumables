@@ -42,7 +42,7 @@ menu_items = (
                             ),
                             NavMenuImportButton(
                                 link="plugins:nautobot_consumables:consumabletype_import",
-                                permissions=["nautobot_consumables:add_consumabletype"],
+                                permissions=["nautobot_consumables.add_consumabletype"],
                             ),
                         ],
                     ),
