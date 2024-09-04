@@ -15,10 +15,8 @@
 #
 
 """Forms for Nautobot Consumables models."""
-import copy
 from typing import Any
 
-from constance import config
 from django import forms
 from nautobot.dcim.models import Device, Location, Manufacturer
 from nautobot.extras.forms import (
@@ -27,25 +25,15 @@ from nautobot.extras.forms import (
     NautobotBulkEditForm,
     NautobotFilterForm,
     NautobotModelForm,
-    StatusModelFilterFormMixin,
-    StatusModelBulkEditFormMixin,
     TagsBulkEditFormMixin,
 )
-from nautobot.utilities.forms import (
-    BootstrapMixin,
-    BulkEditForm,
-    CommentField,
-    DatePicker,
-    DynamicModelChoiceField,
-    DynamicModelMultipleChoiceField,
-    SlugField,
-)
+from nautobot.utilities.forms import DynamicModelChoiceField, DynamicModelMultipleChoiceField
 
 from nautobot_consumables import models
 from nautobot_consumables.fields import ConsumablesTypeJSONField
 
 
-class ConsumableJSONFormMixin:
+class ConsumableJSONFormMixin:  # pylint: disable=too-few-public-methods
     """Set the default exclude_list for Consumable JSON forms."""
 
     exclude_list = ["tags", "object_note", "schema", "data"]

@@ -16,7 +16,7 @@
 
 """Signal handlers for Nautobot Consumables app."""
 import logging
-from typing import Any, TypedDict
+from typing import TypedDict
 
 from nautobot.dcim.choices import CableTypeChoices, InterfaceTypeChoices, PortTypeChoices
 from nautobot.utilities.choices import ColorChoices
@@ -59,7 +59,7 @@ def create_json_schema_type(title: str, values_dict: dict, property_order: int |
     return data
 
 
-def post_migrate_create_defaults(sender, apps, **kwargs):  # pylint: disable=W0613
+def post_migrate_create_defaults(*args, **kwargs):  # pylint: disable=W0613
     """Callback function for post_migrate signal -- create default ConsumableTypes."""
     form_factors = {}
     for key, value in InterfaceTypeChoices.CHOICES:

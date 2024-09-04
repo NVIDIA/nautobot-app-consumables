@@ -76,6 +76,7 @@ class JSONModel(PrimaryModel):
 
         # Find any properties named "*_unit" and combine their values with the corresponding
         # property value, e.g. `length = 1` and `length_unit = "ft"` combine to `1 ft`
+        assert isinstance(self.schema, dict)
         for unit_key in [key for key in self.schema.get("properties", {}) if key.endswith("unit")]:
             prop = unit_key.strip("_unit")
             if self.schema.get("properties", {}).get(prop):
@@ -141,7 +142,7 @@ class ConsumableType(JSONModel):
 
     def to_csv(self) -> tuple[str, str]:
         """Return a tuple of model values suitable for exporting to CSV."""
-        return self.name, self.schema
+        return self.name, str(self.schema)
 
 
 class Consumable(JSONModel):
@@ -221,10 +222,10 @@ class Consumable(JSONModel):
         """Return a tuple of model values suitable for exporting to CSV."""
         return (
             self.name,
-            self.consumable_type.name,
-            self.manufacturer.name,
+            str(self.consumable_type.name),
+            str(self.manufacturer.name),
             self.product_id,
-            self.data,
+            str(self.data),
         )
 
 
@@ -358,7 +359,8 @@ class CheckedOutConsumable(PrimaryModel):
         super().clean()
 
         if hasattr(self, "device") and hasattr(self, "consumable_pool"):
-            if self.device.location != self.consumable_pool.location:
+            if self.device.location != self.consumable_pool.location:  # pylint: disable=no-member
+                # pylint: disable=no-member
                 raise ValidationError(
                     f"Cannot check out consumables from Pool {self.consumable_pool.name} in "
                     f"location {self.consumable_pool.location.name} to Device {self.device.name} "
@@ -370,6 +372,7 @@ class CheckedOutConsumable(PrimaryModel):
                 obj = self.__class__.objects.get(pk=self.pk)
                 previous_quantity = obj.quantity
 
+            # pylint: disable=no-member
             maximum_quantity = previous_quantity + self.consumable_pool.available_quantity
             if self.quantity > maximum_quantity:
                 raise ValidationError(

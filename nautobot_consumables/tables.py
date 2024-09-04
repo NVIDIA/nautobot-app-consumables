@@ -26,6 +26,8 @@ from nautobot.utilities.tables import (
 
 from nautobot_consumables import models
 
+# pylint: disable=too-few-public-methods
+
 
 __all__ = [
     "CheckedOutConsumableBulkEditTable",

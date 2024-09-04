@@ -20,7 +20,7 @@ from nautobot.dcim.models import Device, Location
 from nautobot.utilities.filters import RelatedMembershipBooleanFilter
 
 
-class DeviceFilterExtension(FilterExtension):
+class DeviceFilterExtension(FilterExtension):  # pylint: disable=too-few-public-methods
     """Extend the DeviceFilterSet to add a search for checked out consumables."""
 
     model = Device
@@ -33,7 +33,7 @@ class DeviceFilterExtension(FilterExtension):
     }
 
 
-class LocationFilterExtension(FilterExtension):
+class LocationFilterExtension(FilterExtension):  # pylint: disable=too-few-public-methods
     """Extend the LocationFilterSet to add a search for available consumables."""
 
     model = Location

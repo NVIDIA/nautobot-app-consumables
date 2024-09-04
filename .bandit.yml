@@ -1,5 +1,6 @@
 ---
-skips: []
+# Skip the assert_used check, assert is used to enforce types for mypy checks.
+skips: ["B101"]
 # No need to check for security issues in the test scripts!
 exclude_dirs:
   - "tests/"

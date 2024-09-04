@@ -96,7 +96,7 @@ class ConsumableViewSet(NautobotUIViewSet):
         if self.action in ("create", "update"):
             return "nautobot_consumables/json_form.html"
 
-        return super().get_template_name()
+        return str(super().get_template_name())
 
 
 class ConsumablePoolViewSet(NautobotUIViewSet):
@@ -111,6 +111,8 @@ class ConsumablePoolViewSet(NautobotUIViewSet):
     queryset = models.ConsumablePool.objects.all()
     serializer_class = serializers.ConsumablePoolSerializer
     table_class = tables.ConsumablePoolTable
+
+    obj: models.ConsumablePool
 
     def get_extra_context(self, request, instance=None):
         """Gather extra context for the views."""
@@ -146,7 +148,7 @@ class ConsumablePoolViewSet(NautobotUIViewSet):
 
         return context
 
-    def _process_bulk_update_form(self, form):
+    def _process_bulk_update_form(self, form) -> None:  # pylint: disable=too-many-branches
         """Perform the actual work on a bulk update if the form is valid."""
         request = self.request
         queryset = self.get_queryset()
@@ -163,14 +165,14 @@ class ConsumablePoolViewSet(NautobotUIViewSet):
             for instance in queryset.filter(pk__in=form.cleaned_data["pk"]):
                 self.obj = instance
                 if new_location is not None and instance.location != new_location:
-                    setattr(instance, "location", new_location)
+                    instance.location = new_location
                     self.logger.debug("Pool %s is moving to %s", instance, new_location)
                     for checked_out in instance.checked_out.all():
                         checked_in += checked_out.quantity
                         checked_out.delete()
 
                 if new_quantity is not None and instance.quantity != new_quantity:
-                    setattr(instance, "quantity", new_quantity)
+                    instance.quantity = new_quantity
 
                 # Handle any assigned custom fields
                 for field_name in getattr(form, "custom_fields", []):
@@ -240,7 +242,7 @@ class ConsumableTypeViewSet(NautobotUIViewSet):
         if self.action in ("create", "update"):
             return "nautobot_consumables/json_form.html"
 
-        return super().get_template_name()
+        return str(super().get_template_name())
 
 
 class DeviceConsumablesViewTab(generic.ObjectView):

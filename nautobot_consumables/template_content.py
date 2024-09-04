@@ -23,6 +23,8 @@ from nautobot.apps.ui import TemplateExtension
 
 from nautobot_consumables.models import CheckedOutConsumable, ConsumablePool
 
+# pylint: disable=abstract-method
+
 
 class DeviceConsumablesCount(TemplateExtension):
     """Extend the dcim.device model templates."""
