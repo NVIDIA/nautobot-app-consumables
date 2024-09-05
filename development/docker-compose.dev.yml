@@ -20,7 +20,7 @@ services:
     volumes:
       - "../docs:/source/docs:ro"
       - "../mkdocs.yml:/source/mkdocs.yml:ro"
-    image: "nautobot-consumables/nautobot:${NAUTOBOT_VER}-py${PYTHON_VER}"
+    image: "consumables/nautobot:${NAUTOBOT_VER}-py${PYTHON_VER}"
     healthcheck:
       disable: true
     tty: true

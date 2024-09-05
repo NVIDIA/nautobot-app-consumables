@@ -9,7 +9,7 @@ x-nautobot-build:
     dockerfile: "development/Dockerfile"
 x-nautobot-base:
   &nautobot-base
-  image: "nautobot-consumables/nautobot:${NAUTOBOT_VER}-py${PYTHON_VER}"
+  image: "consumables/nautobot:${NAUTOBOT_VER}-py${PYTHON_VER}"
   env_file:
     - "development.env"
     - "creds.env"
