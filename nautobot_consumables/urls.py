@@ -36,7 +36,7 @@ urlpatterns = [
         name="device_consumables_tab",
     ),
     path(
-        "locations/<slug:slug>/consumables",
+        "locations/<uuid:pk>/consumables",
         views.LocationConsumablesViewTab.as_view(),
         name="location_consumables_tab",
     ),

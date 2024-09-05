@@ -153,7 +153,7 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
         new_quantity: int | None = form.cleaned_data.get("quantity", None)
         nullified_fields = request.POST.getlist("_nullify")
         form_cf_to_key = {
-            f"cf_{cf.slug}": cf.name for cf in CustomField.objects.get_for_model(queryset.model)
+            f"cf_{cf.key}": cf.name for cf in CustomField.objects.get_for_model(queryset.model)
         }
 
         with transaction.atomic():
@@ -302,7 +302,7 @@ class LocationConsumablesViewTab(generic.ObjectView):
 
         return_url = [reverse(
             "plugins:nautobot_consumables:location_consumables_tab",
-            kwargs={"slug": instance.slug},
+            kwargs={"pk": instance.pk},
         ), "tab=nautobot_consumables:1"]
         context["return_url"] = "?".join(return_url)
 
