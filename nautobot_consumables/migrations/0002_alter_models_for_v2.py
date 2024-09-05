@@ -7,7 +7,7 @@ from nautobot.core.models.fields import TagsField
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('extras', '0115_scheduledjob_time_zone'),
+        ('extras', '0098_rename_data_jobresult_result'),
         ('nautobot_consumables', '0001_initial'),
     ]
 
