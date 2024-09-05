@@ -18,14 +18,8 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from nautobot.dcim.models import (
-    Device,
-    DeviceRole,
-    DeviceType,
-    Location,
-    LocationType,
-    Manufacturer,
-)
+from nautobot.dcim.models import Device, DeviceType, Location, LocationType, Manufacturer
+from nautobot.extras.models import Role, Status
 
 from nautobot_consumables import models
 
@@ -219,9 +213,9 @@ class CheckedOutConsumableTestCase(TestCase):
         cls.device = Device.objects.create(
             name="Test Device",
             device_type=DeviceType.objects.first(),
-            device_role=DeviceRole.objects.first(),
-            site=cls.pool.location.base_site,
+            role=Role.objects.first(),
             location=cls.pool.location,
+            status=Status.objects.get_for_model(Device).first(),
         )
 
     def test_validated_save(self):

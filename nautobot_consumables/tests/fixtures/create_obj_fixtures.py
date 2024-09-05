@@ -15,11 +15,12 @@
 #
 
 """Create test environment object fixtures."""
+from django.contrib.contenttypes.models import ContentType
 from django.utils.crypto import get_random_string
 import factory.random
 from nautobot.core.choices import ColorChoices
-from nautobot.dcim.models import Device, DeviceType, Location, Manufacturer
-from nautobot.extras.models import Role
+from nautobot.dcim.models import Device, DeviceType, Location, LocationType, Manufacturer
+from nautobot.extras.models import Role, Status
 
 from nautobot_consumables import models
 
@@ -29,21 +30,25 @@ def create_devices():
     for num in range(1, 6):
         device_type = factory.random.randgen.choice(DeviceType.objects.all())
         device_role = factory.random.randgen.choice(Role.objects.all())
-        location = factory.random.randgen.choice(Location.objects.filter(site__isnull=False))
+        location = factory.random.randgen.choice(Location.objects.filter(
+            location_type__in=LocationType.objects.filter(
+                content_types__in=[ContentType.objects.get_for_model(Device)]
+            )
+        ))
 
         _ = Device.objects.get_or_create(
             device_type=device_type,
-            device_role=device_role,
+            role=device_role,
             name=f"Device {num}-1",
-            site=location.site,
             location=location,
+            status=Status.objects.get_for_model(Device).first(),
         )
         _ = Device.objects.get_or_create(
             device_type=device_type,
-            device_role=device_role,
+            role=device_role,
             name=f"Device {num}-2",
-            site=location.site,
             location=location,
+            status=Status.objects.get_for_model(Device).first(),
         )
 
 
