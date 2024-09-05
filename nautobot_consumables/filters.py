@@ -15,7 +15,7 @@
 #
 
 """Filters for Nautobot Consumables models."""
-from nautobot.core.filters import SearchFilter, TagFilter
+from nautobot.core.filters import SearchFilter
 from nautobot.extras.filters import NautobotFilterSet
 
 from nautobot_consumables.models import (
@@ -36,13 +36,11 @@ class CheckedOutConsumableFilterSet(NautobotFilterSet):
         },
     )
 
-    tags = TagFilter()
-
     class Meta:
         """CheckedOutConsumableFilter model options."""
 
         model = CheckedOutConsumable
-        fields = CheckedOutConsumable.csv_headers
+        fields = ["consumable_pool", "device", "quantity", "tags"]
 
 
 class ConsumableFilterSet(NautobotFilterSet):
@@ -57,13 +55,11 @@ class ConsumableFilterSet(NautobotFilterSet):
         },
     )
 
-    tags = TagFilter()
-
     class Meta:
         """ConsumableFilterSet model options."""
 
         model = Consumable
-        fields = Consumable.csv_headers
+        fields = ["name", "consumable_type", "manufacturer", "product_id", "data", "tags"]
 
 
 class ConsumablePoolFilterSet(NautobotFilterSet):
@@ -77,23 +73,20 @@ class ConsumablePoolFilterSet(NautobotFilterSet):
         }
     )
 
-    tags = TagFilter()
-
     class Meta:
         """ConsumablePoolFilterSet model options."""
 
         model = ConsumablePool
-        fields = ConsumablePool.csv_headers
+        fields = ["name", "consumable", "location", "quantity", "tags"]
 
 
 class ConsumableTypeFilterSet(NautobotFilterSet):
     """Filter set for ConsumableType instances."""
 
     q = SearchFilter(filter_predicates={"name": "icontains"})
-    tags = TagFilter()
 
     class Meta:
         """ConsumableTypeFilterSet model options."""
 
         model = ConsumableType
-        fields = ConsumableType.csv_headers
+        fields = ["name", "schema", "tags"]
