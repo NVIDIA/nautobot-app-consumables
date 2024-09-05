@@ -32,7 +32,6 @@ class CheckedOutConsumableUIViewSet(NautobotUIViewSet):
     """UI view set for CheckedOutConsumables."""
 
     action_buttons = ("export",)
-    bulk_create_form_class = forms.CheckedOutConsumableCSVForm
     bulk_update_form_class = forms.CheckedOutConsumableBulkEditForm
     filterset_class = filters.CheckedOutConsumableFilterSet
     filterset_form_class = forms.CheckedOutConsumableFilterForm
@@ -60,7 +59,6 @@ class CheckedOutConsumableUIViewSet(NautobotUIViewSet):
 class ConsumableUIViewSet(NautobotUIViewSet):
     """UI view set for Consumables."""
 
-    bulk_create_form_class = forms.ConsumableCSVForm
     bulk_update_form_class = forms.ConsumableBulkEditForm
     filterset_class = filters.ConsumableFilterSet
     filterset_form_class = forms.ConsumableFilterForm
@@ -102,7 +100,6 @@ class ConsumableUIViewSet(NautobotUIViewSet):
 class ConsumablePoolUIViewSet(NautobotUIViewSet):
     """UI view set for ConsumablePools."""
 
-    bulk_create_form_class = forms.ConsumablePoolCSVForm
     bulk_update_form_class = forms.ConsumablePoolBulkEditForm
     filterset_class = filters.ConsumablePoolFilterSet
     filterset_form_class = forms.ConsumablePoolFilterForm
@@ -212,7 +209,6 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
 class ConsumableTypeUIViewSet(NautobotUIViewSet):
     """UI view set for ConsumableTypes."""
 
-    bulk_create_form_class = forms.ConsumableTypeCSVForm
     bulk_update_form_class = forms.ConsumableTypeBulkEditForm
     filterset_class = filters.ConsumableTypeFilterSet
     filterset_form_class = forms.ConsumableTypeFilterForm
