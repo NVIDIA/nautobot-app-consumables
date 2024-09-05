@@ -19,7 +19,7 @@
 from importlib import metadata
 
 from django.db.models.signals import post_migrate
-from nautobot.extras.plugins import NautobotAppConfig
+from nautobot.apps import NautobotAppConfig
 
 dist = metadata.distribution(__name__)
 __version__ = dist.metadata.get("Version")  # type: ignore[attr-defined]

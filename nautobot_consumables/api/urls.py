@@ -15,7 +15,7 @@
 #
 
 """URL routes for Nautobot Consumables API endpoints."""
-from nautobot.core.api import OrderedDefaultRouter
+from nautobot.apps.api import OrderedDefaultRouter
 
 from nautobot_consumables.api import views
 

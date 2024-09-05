@@ -15,8 +15,7 @@
 #
 
 """Extensions to add filtering for available and used consumables to Devices and Locations."""
-from nautobot.apps.filters import FilterExtension
-from nautobot.core.filters import RelatedMembershipBooleanFilter
+from nautobot.apps.filters import FilterExtension, RelatedMembershipBooleanFilter
 from nautobot.dcim.models import Device, Location
 
 

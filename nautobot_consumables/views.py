@@ -20,7 +20,7 @@ from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from nautobot.core.views import generic
-from nautobot.core.views.viewsets import NautobotUIViewSet
+from nautobot.apps.views import NautobotUIViewSet
 from nautobot.dcim.models import Device, Location
 from nautobot.extras.models import CustomField
 

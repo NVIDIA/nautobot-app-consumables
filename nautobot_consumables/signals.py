@@ -18,8 +18,12 @@
 import logging
 from typing import TypedDict
 
-from nautobot.core.choices import ColorChoices
-from nautobot.dcim.choices import CableTypeChoices, InterfaceTypeChoices, PortTypeChoices
+from nautobot.apps.choices import (
+    ColorChoices,
+    CableTypeChoices,
+    InterfaceTypeChoices,
+    PortTypeChoices,
+)
 
 from nautobot_consumables.models import ConsumableType
 

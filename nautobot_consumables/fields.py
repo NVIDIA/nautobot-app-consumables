@@ -19,7 +19,7 @@ import json
 from typing import Any
 
 from django.forms.fields import InvalidJSONInput, JSONString
-from nautobot.core.forms import JSONField as NBJSONField
+from nautobot.apps.forms import JSONField as NBJSONField
 
 
 class ConsumablesTypeJSONField(NBJSONField):
