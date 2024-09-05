@@ -1,0 +1,20 @@
+{% load helpers %}
+{% load form_helpers %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>{{ obj_type | title }} Schema</strong>
+    </div>
+    <div class="panel-body">
+        {% render_field form.schema %}
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <a class="btn btn-primary btn-xs pull-right" id="setschema">Update Schema</a>
+        <strong>Form Preview</strong>
+    </div>
+    <div class="panel-body">
+        <div id="editor_holder"></div>
+    </div>
+</div>

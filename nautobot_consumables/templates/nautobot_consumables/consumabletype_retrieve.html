@@ -4,7 +4,7 @@
 
 {% block content_left_page %}
     {% if object.schema %}
-        {% include "nautobot_consumables/inc/json_form_fields.html" with demo=True title="Sample Form" %}
+        {% include "nautobot_consumables/inc/json_data_fields.html" with demo=True title="Sample Form" %}
     {% endif %}
 {% endblock content_left_page %}
 
@@ -24,3 +24,11 @@
     </div>
 </div>
 {% endblock content_full_width_page %}
+
+{% block javascript %}
+{{ block.super }}
+<script src="{% static 'nautobot_consumables/js/jsoneditor.js' %}"></script>
+<script src="{% static 'nautobot_consumables/js/json5.min.js' %}"></script>
+<script src="{% static 'nautobot_consumables/js/nautobot-jsoneditor.js' %}"></script>
+{% include "nautobot_consumables/inc/form_submit_javascript.html" %}
+{% endblock javascript %}

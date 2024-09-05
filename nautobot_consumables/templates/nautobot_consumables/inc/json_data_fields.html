@@ -1,0 +1,15 @@
+{% load helpers %}
+{% load form_helpers %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong>{% if title %}{{ title }}{% else %}{{ obj_type | title }} Details{% endif %}</strong>
+    </div>
+    <div class="panel-body">
+        <div id="editor_holder"></div>
+        <input type="hidden" id="id_api_url" value="{% url 'plugins-api:nautobot_consumables-api:consumabletype-list' %}" />
+        <input type="hidden" id="id_schema" name="schema" value="{{ object.schema | default_if_none:"" | safe }}" />
+        <input type="hidden" id="starting_data" value="{{ object.data | default_if_none:"" | safe }}" />
+        <input type="hidden" id="data" name="data" />
+    </div>
+</div>
