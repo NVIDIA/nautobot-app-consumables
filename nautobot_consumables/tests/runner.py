@@ -89,11 +89,9 @@ class NautobotConsumablesTestRunner(XMLTestRunner):
         """Create the test databases and add base set of factory data."""
         result = super().setup_databases(**kwargs)
         if result:
-            command = ["create_consumables_env"]
-            if self.keepdb:
-                command.extend(["--seed", os.environ.get("NAUTOBOT_TEST_SEED", "setec_astronomy")])
-            if self.flush:
-                command.append("--flush")
+            command = ["create_consumables_env", "--flush", "--no-input"]
+            if settings.TEST_FACTORY_SEED:
+                command.extend(["--seed", settings.TEST_FACTORY_SEED])
             if self.cache_test_fixtures:
                 command.append("--cache-fixtures")
             if self.fixture_file:

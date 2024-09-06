@@ -15,9 +15,17 @@
 #
 
 """Tests for models defined by the Consumables app."""
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from nautobot.dcim.models import Device, Location, Manufacturer
+from nautobot.dcim.models import (
+    Device,
+    DeviceRole,
+    DeviceType,
+    Location,
+    LocationType,
+    Manufacturer,
+)
 
 from nautobot_consumables import models
 
@@ -219,18 +227,33 @@ class CheckedOutConsumableTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Set up the base test data."""
-        pool = models.ConsumablePool.objects.get(name="Cable 1 Pool 1")
-        cls.device = Device.objects.filter(location=pool.location).last()
-        cls.checked_out_consumable = models.CheckedOutConsumable(
-            consumable_pool=pool,
-            device=cls.device,
-            quantity=5,
+        cls.pool = models.ConsumablePool.objects.create(
+            consumable=models.Consumable.objects.first(),
+            name="Test Consumable Pool",
+            location=Location.objects.filter(
+                location_type__in=LocationType.objects.filter(
+                    content_types__in=[ContentType.objects.get_for_model(Device)]
+                )
+            ).first(),
+            quantity=8,
+        )
+        cls.device = Device.objects.create(
+            name="Test Device",
+            device_type=DeviceType.objects.first(),
+            device_role=DeviceRole.objects.first(),
+            site=cls.pool.location.base_site,
+            location=cls.pool.location,
         )
 
     def test_validated_save(self):
         """Test creating a CheckedOutConsumable and saving it with validation."""
-        self.checked_out_consumable.validated_save()
-        self.checked_out_consumable.validated_save()
+        checked_out_consumable = models.CheckedOutConsumable(
+            consumable_pool=self.pool,
+            device=self.device,
+            quantity=5,
+        )
+        checked_out_consumable.validated_save()
+        checked_out_consumable.validated_save()
 
     def test_instance_name(self):
         """Test the string representation of the model."""
@@ -252,21 +275,26 @@ class CheckedOutConsumableTestCase(TestCase):
             self.assertEqual(f"{new_checked_out_consumable}", "No Device | Generic 1 Pool 1")
 
         with self.subTest(check="complete"):
+            new_checked_out_consumable.device = new_device
             self.assertEqual(
-                f"{self.checked_out_consumable}",
-                f"{self.device.name} | Cable 1 Pool 1"
+                f"{new_checked_out_consumable}",
+                f"{new_device.name} | Generic 1 Pool 1"
             )
 
     def test_invalid_device(self):
         """Test checking out to a Device in a different location."""
         device = Device.objects.exclude(
-            location=self.checked_out_consumable.device.location,
+            location=self.device.location,
         ).first()
-        self.checked_out_consumable.device = device
+        checked_out_consumable = models.CheckedOutConsumable(
+            consumable_pool=self.pool,
+            device=device,
+            quantity=5,
+        )
         with self.assertRaises(ValidationError) as context:
-            self.checked_out_consumable.validated_save()
+            checked_out_consumable.validated_save()
         error = context.exception.error_dict["__all__"][0]
-        pool = self.checked_out_consumable.consumable_pool
+        pool = checked_out_consumable.consumable_pool
         self.assertEqual(
             error.message,
             f"Cannot check out consumables from Pool {pool.name} in location "
@@ -275,21 +303,31 @@ class CheckedOutConsumableTestCase(TestCase):
 
     def test_invalid_quantity(self):
         """Test trying to check out more items than are available."""
-        pool = self.checked_out_consumable.consumable_pool
-        requested = pool.available_quantity + 5
-        self.checked_out_consumable.quantity = requested
+        checked_out_consumable, _ = models.CheckedOutConsumable.objects.get_or_create(
+            consumable_pool=self.pool,
+            device=self.device,
+            quantity=5,
+        )
+        pool = checked_out_consumable.consumable_pool
+        requested = pool.available_quantity + 1
+        checked_out_consumable.quantity += requested
         with self.assertRaises(ValidationError) as context:
-            self.checked_out_consumable.validated_save()
+            checked_out_consumable.validated_save()
         error = context.exception.error_dict["__all__"][0]
         self.assertEqual(
             error.message,
-            f"Consumable pool does not have enough available capacity, "
-            f"requesting {requested}, only {pool.available_quantity} available.",
+            f"Consumable pool does not have enough available capacity, requesting "
+            f"{checked_out_consumable.quantity}, only {pool.available_quantity + 5} available.",
         )
 
     def test_export_instance(self):
         """Test exporting the model to CSV."""
-        csv = self.checked_out_consumable.to_csv()
+        checked_out_consumable, _ = models.CheckedOutConsumable.objects.get_or_create(
+            consumable_pool=self.pool,
+            device=self.device,
+            quantity=5,
+        )
+        csv = checked_out_consumable.to_csv()
         self.assertIsInstance(csv, tuple)
         self.assertEqual(len(csv), 3)
         self.assertEqual(csv[2], 5)

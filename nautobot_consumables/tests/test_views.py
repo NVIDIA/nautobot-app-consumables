@@ -46,34 +46,44 @@ class CheckedOutConsumableViewTestCase(
     @classmethod
     def setUpTestData(cls):
         """Set up base data for the tests."""
+        pools = [
+            models.ConsumablePool.objects.last(),
+            models.ConsumablePool.objects.get(name='Generic 4 Pool 1'),
+            models.ConsumablePool.objects.get(name='Generic 5 Pool 1'),
+        ]
         cls.form_data = {
-            "consumable_pool": models.ConsumablePool.objects.first().pk,
-            "device": Device.objects.get(name="Device 1-2").pk,
+            "consumable_pool": pools[0].pk,
+            "device": Device.objects.filter(location=pools[0].location).first().pk,
             "quantity": 5,
         }
         cls.csv_data = (
             "consumable_pool,device,quantity",
-            f"{models.ConsumablePool.objects.get(name='Generic 4 Pool 1').pk},"
-            f"{Device.objects.get(name='Device 4-1').pk},5",
-            f"{models.ConsumablePool.objects.get(name='Generic 4 Pool 1').pk},"
-            f"{Device.objects.get(name='Device 4-2').pk},5",
-            f"{models.ConsumablePool.objects.get(name='Generic 5 Pool 1').pk},"
-            f"{Device.objects.get(name='Device 5-1').pk},5",
+            f"{pools[1].pk},{Device.objects.filter(location=pools[1].location).first().pk},5",
+            f"{pools[1].pk},{Device.objects.filter(location=pools[1].location).last().pk},5",
+            f"{pools[2].pk},{Device.objects.filter(location=pools[2].location).first().pk},5",
         )
 
     @override_settings(EXEMPT_VIEW_PERMISSIONS=["*"])
     def test_edit_object_with_permission(self):
         """Handle the form idiosyncracies."""
-        self.form_data = copy(self.form_data)
-        self.form_data["device"] = models.CheckedOutConsumable.objects.first().device.pk
+        instance = self._get_queryset().all()[0]
+        self.form_data = {
+            "consumable_pool": instance.consumable_pool.pk,
+            "device": instance.device.pk,
+            "quantity": instance.quantity + 1,
+        }
 
         super().test_edit_object_with_permission()
 
     @override_settings(EXEMPT_VIEW_PERMISSIONS=["*"])
     def test_edit_object_with_constrained_permission(self):
         """Handle the form idiosyncracies."""
-        self.form_data = copy(self.form_data)
-        self.form_data["device"] = models.CheckedOutConsumable.objects.first().device.pk
+        instance = self._get_queryset().all()[0]
+        self.form_data = {
+            "consumable_pool": instance.consumable_pool.pk,
+            "device": instance.device.pk,
+            "quantity": instance.quantity + 1,
+        }
 
         super().test_edit_object_with_constrained_permission()
 

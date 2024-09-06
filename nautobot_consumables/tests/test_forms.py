@@ -28,9 +28,10 @@ class CheckedOutConsumableFormsTestCase(TestCase):
 
     def test_create_checkedoutconsumable_form(self):
         """Test creating a new CheckedOutConsumable instance."""
+        pool = models.ConsumablePool.objects.last()
         form = forms.CheckedOutConsumableForm(
             initial={
-                "consumable_pool": models.ConsumablePool.objects.first().pk,
+                "consumable_pool": pool.pk,
             },
         )
 
@@ -40,7 +41,7 @@ class CheckedOutConsumableFormsTestCase(TestCase):
         form = forms.CheckedOutConsumableForm(
             data={
                 **form.initial,
-                "device": Device.objects.get(name="Device 1-2").pk,
+                "device": Device.objects.filter(location=pool.location).first().pk,
             },
         )
         self.assertTrue(form.is_valid())
@@ -65,10 +66,11 @@ class CheckedOutConsumableFormsTestCase(TestCase):
 
     def test_checkedoutconsumable_csv_form(self):
         """Test creating a CSV form instance."""
+        pool = models.ConsumablePool.objects.last()
         form = forms.CheckedOutConsumableCSVForm(
             data={
-                "consumable_pool": models.ConsumablePool.objects.first().pk,
-                "device": Device.objects.get(name="Device 1-2").pk,
+                "consumable_pool": pool.pk,
+                "device": Device.objects.filter(location=pool.location).first().pk,
                 "quantity": 5,
             },
         )
