@@ -114,7 +114,7 @@ class CheckedOutConsumableForm(ConsumablesBaseModelForm):
         """CheckedOutConsumableForm model options."""
 
         model = models.CheckedOutConsumable
-        fields = ["consumable_pool", "device", "quantity"]
+        fields = ["consumable_pool", "device", "quantity", "tags"]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize form and check for proper fields for the assigned consumable_pool."""
@@ -194,7 +194,7 @@ class ConsumableForm(ConsumablesBaseModelForm, ConsumableJSONFormMixin):
         """ConsumableForm model options."""
 
         model = models.Consumable
-        fields = ["name", "consumable_type", "manufacturer", "product_id", "data"]
+        fields = ["name", "consumable_type", "manufacturer", "product_id", "data", "tags"]
 
 
 # Consumable Pools
@@ -242,7 +242,7 @@ class ConsumablePoolForm(ConsumablesBaseModelForm, ConsumableJSONFormMixin):
         """ConsumablePoolForm model options."""
 
         model = models.ConsumablePool
-        fields = ["name", "consumable", "location", "quantity"]
+        fields = ["name", "consumable", "location", "quantity", "tags"]
 
 
 # Consumable Types
@@ -277,4 +277,4 @@ class ConsumableTypeForm(NautobotModelForm, ConsumableJSONFormMixin):
         """ConsumableTypeForm model options."""
 
         model = models.ConsumableType
-        fields = ["name", "schema"]
+        fields = ["name", "schema", "tags"]
