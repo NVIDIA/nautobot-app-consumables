@@ -142,7 +142,8 @@ class ConsumableViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         # Without change_consumablepool permission, the Consumable Pools table won't show the pk
         # column, and the header will not have a toggle all checkbox.
         self.assertNotIn(
-            'input type="checkbox" class="toggle" title="Toggle all"',
+            f'<td class="min-width"><input type="checkbox" name="pk" '
+            f'value="{instance.pools.first().pk}" /></td>',
             response_body,
             msg=response_body
         )
@@ -156,7 +157,8 @@ class ConsumableViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         # With change_consumablepool permission, the Consumable Pools table will show the pk
         # column, and the header will have a toggle all checkbox.
         self.assertIn(
-            'input type="checkbox" class="toggle" title="Toggle all"',
+            f'<td class="min-width"><input type="checkbox" name="pk" '
+            f'value="{instance.pools.first().pk}" /></td>',
             response_body,
             msg=response_body
         )
@@ -230,7 +232,8 @@ class ConsumablePoolViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         # Without change_checkedoutconsumable permission, the Checked Out Consumables table won't
         # show the pk column, and the header will not have a toggle all checkbox.
         self.assertNotIn(
-            'input type="checkbox" class="toggle" title="Toggle all"',
+            f'<td class="min-width"><input type="checkbox" name="pk" '
+            f'value="{instance.checked_out.first().pk}" /></td>',
             response_body,
             msg=response_body
         )
@@ -244,7 +247,8 @@ class ConsumablePoolViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         # With change_checkedoutconsumable permission, the Checked Out Consumables table will
         # show the pk column, and the header will have a toggle all checkbox.
         self.assertIn(
-            'input type="checkbox" class="toggle" title="Toggle all"',
+            f'<td class="min-width"><input type="checkbox" name="pk" '
+            f'value="{instance.checked_out.first().pk}" /></td>',
             response_body,
             msg=response_body
         )
@@ -286,7 +290,8 @@ class ConsumableTypeViewTestCase(
     @override_settings(EXEMPT_VIEW_PERMISSIONS=[])
     def test_get_object_with_change_consumable_permission(self):
         """Test the detail view with change_cconsumable permissions."""
-        instance = self._get_queryset().first()
+        instance = self._get_queryset().get(name="Cable")
+        test_consumable = models.Consumable.objects.filter(consumable_type=instance.pk).first()
 
         # Add model-level permission
         obj_perm = ObjectPermission(name="Test permission", actions=["view", "change"])
@@ -301,7 +306,8 @@ class ConsumableTypeViewTestCase(
         # Without change_consumable permission, the Consumables table won't show the pk column, and
         # the header will not have a toggle all checkbox.
         self.assertNotIn(
-            'input type="checkbox" class="toggle" title="Toggle all"',
+            f'<td class="min-width"><input type="checkbox" name="pk" '
+            f'value="{test_consumable.pk}" /></td>',
             response_body,
             msg=response_body
         )
@@ -315,7 +321,8 @@ class ConsumableTypeViewTestCase(
         # With change_consumable permission, the Consumables table will show the pk column, and the
         # header will have a toggle all checkbox.
         self.assertIn(
-            'input type="checkbox" class="toggle" title="Toggle all"',
+            f'<td class="min-width"><input type="checkbox" name="pk" '
+            f'value="{test_consumable.pk}" /></td>',
             response_body,
             msg=response_body
         )
