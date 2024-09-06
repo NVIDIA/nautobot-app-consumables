@@ -49,6 +49,7 @@ class NautobotConsumablesTestRunner(XMLTestRunner):
 
     @classmethod
     def add_arguments(cls, parser):
+        """Additional arguments for the test runner."""
         super().add_arguments(parser)
         parser.add_argument(
             "--cache-test-fixtures",
@@ -72,6 +73,7 @@ class NautobotConsumablesTestRunner(XMLTestRunner):
         )
 
     def setup_test_environment(self, **kwargs):
+        """Global pre-test setup."""
         super().setup_test_environment(**kwargs)
 
         # Remove 'testserver' that Django "helpfully" adds automatically
@@ -84,6 +86,7 @@ class NautobotConsumablesTestRunner(XMLTestRunner):
             settings.TEST_OUTPUT_FILE_NAME = self.report_file
 
     def setup_databases(self, **kwargs):
+        """Create the test databases and add base set of factory data."""
         result = super().setup_databases(**kwargs)
         if result:
             command = ["create_consumables_env"]
@@ -103,3 +106,16 @@ class NautobotConsumablesTestRunner(XMLTestRunner):
                 call_command(*db_command)
 
         return result
+
+    def teardown_databases(self, old_config, **kwargs):
+        """Clean up the test databases."""
+        # If keepdb is set, the test database won't be dropped, so we'll clean up the test data.
+        if self.keepdb:
+            command = ["flush_consumables_env", "--no-input"]
+            for connection in old_config:
+                db_name = connection[0].alias
+                print(f"Cleaning up test database {db_name}...")
+                db_command = command + ["--database", db_name]
+                call_command(*db_command)
+
+        super().teardown_databases(old_config, **kwargs)
