@@ -15,6 +15,7 @@
 #
 
 """Create test environment object fixtures."""
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.crypto import get_random_string
 import factory.random
@@ -138,8 +139,10 @@ def create_env(seed: str | None = None):
         seed = get_random_string(16)
     factory.random.reseed_random(seed)
 
-    print("Creating Devices...")
-    create_devices()
+    # Factory test data in versions before 2.0.x doesn't include Devices for some reason.
+    if settings.VERSION_MINOR == 0:
+        print("Creating Devices...")
+        create_devices()
 
     print("Creating Consumables...")
     consumables = create_consumables()
