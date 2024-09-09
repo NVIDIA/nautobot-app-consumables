@@ -47,9 +47,26 @@ def build(context: Context, force_rm: bool = False, cache: bool = True) -> None:
     helpers.docker_compose(context, " ".join(command))
 
 
+@task(
+    help={
+        "local": "Force the command to run locally instead of in the service container."
+    }
+)
+def mkdocs(context: Context, local: bool = False) -> None:
+    """Runs `mkdocs` to create the static documentation for the plugin."""
+    command = ["mkdocs build --no-directory-urls --strict"]
+    if local:
+        context = context
+        context.nautobot_consumables.local = True
+        command.insert(0, "poetry run")
+
+    helpers.run_command(context, " ".join(command))
+
+
 @task
 def generate_packages(context: Context) -> None:
     """Generate all python packages inside a docker container and copy them to ./dist"""
+    mkdocs(context)
     helpers.run_command(context, "poetry build")
 
 
@@ -440,21 +457,5 @@ def flush_env(context: Context, no_input: bool = False, database: str | None = N
 
     if database is not None:
         command.append(f"--database={database}")
-
-    helpers.run_command(context, " ".join(command))
-
-
-@task(
-    help={
-        "local": "Force the command to run locally instead of in the service container."
-    }
-)
-def mkdocs(context: Context, local: bool = False) -> None:
-    """Runs `mkdocs` to create the static documentation for the plugin."""
-    command = ["mkdocs build --no-directory-urls --strict"]
-    if local:
-        context = context
-        context.nautobot_consumables.local = True
-        command.insert(0, "poetry run")
 
     helpers.run_command(context, " ".join(command))

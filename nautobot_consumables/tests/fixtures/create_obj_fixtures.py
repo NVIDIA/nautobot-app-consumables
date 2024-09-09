@@ -57,8 +57,9 @@ def create_consumables() -> list[list[models.Consumable]]:
     transceiver_consumable = models.ConsumableType.objects.get(name="Transceiver")
 
     consumables: list[list[models.Consumable]] = []
+    used_mfgrs: list[str] = []
     for num in range(1, 6):
-        mfgr = factory.random.randgen.choice(Manufacturer.objects.all())
+        mfgr = factory.random.randgen.choice(Manufacturer.objects.exclude(id__in=used_mfgrs))
 
         generic, _ = models.Consumable.objects.get_or_create(
             name=f"Generic {num}",
@@ -93,6 +94,7 @@ def create_consumables() -> list[list[models.Consumable]]:
         )
 
         consumables.append([generic, cable, transceiver])
+        used_mfgrs.append(mfgr.id)
 
     return consumables
 
@@ -130,11 +132,11 @@ def create_env(seed: str | None = None):
         seed = get_random_string(16)
     factory.random.reseed_random(seed)
 
-    print("Creating Devices")
+    print("Creating Devices...")
     create_devices()
 
-    print("Creating Consumables")
+    print("Creating Consumables...")
     consumables = create_consumables()
 
-    print("Creating Consumable Pools")
+    print("Creating Consumable Pools...")
     create_consumable_pools(consumables)

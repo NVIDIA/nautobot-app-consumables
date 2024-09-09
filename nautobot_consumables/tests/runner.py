@@ -16,8 +16,6 @@
 #
 #
 """Test runner wrapper for Consumables app."""
-import os
-
 from django.core.management import call_command
 from django.conf import settings
 from xmlrunner.extra.djangotestrunner import XMLTestRunner
