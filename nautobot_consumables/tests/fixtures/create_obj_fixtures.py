@@ -139,13 +139,15 @@ def create_env(seed: str | None = None):
         seed = get_random_string(16)
     factory.random.reseed_random(seed)
 
-    # Factory test data in versions before 2.0.x doesn't include Devices for some reason.
+    # Factory test data in versions before 2.1.x doesn't include Devices for some reason.
     if settings.VERSION_MINOR == 0:
         print("Creating Devices...")
         create_devices()
 
-    print("Creating Consumables...")
+    print("Creating Consumables..." if settings.VERSION_MINOR <= 1
+          else "Creating 15 consumables...")
     consumables = create_consumables()
 
-    print("Creating Consumable Pools...")
+    print("Creating Consumable Pools..." if settings.VERSION_MINOR <= 1
+          else "Creating 15 consumable pools and checking out 9 consumables...")
     create_consumable_pools(consumables)
