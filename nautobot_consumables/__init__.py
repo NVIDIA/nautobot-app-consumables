@@ -35,6 +35,7 @@ class NautobotConsumablesConfig(NautobotAppConfig):
     author_email: str = f"{dist.metadata.get('Author-email')}"  # type: ignore[attr-defined]
     description: str = f"{dist.metadata.get('Summary')}"  # type: ignore[attr-defined]
     base_url = "consumables"
+    docs_view_name = "plugins:nautobot_consumables:docs"
     required_settings: list[str] = []
     min_version: str = "1.6.1"
     max_version: str = "1.9999"

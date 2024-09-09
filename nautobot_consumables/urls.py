@@ -15,7 +15,9 @@
 #
 
 """URL route mapping for the Nautobot Consumables app."""
+from django.templatetags.static import static
 from django.urls import path
+from django.views.generic import RedirectView
 from nautobot.core.views.routers import NautobotUIViewSetRouter
 
 from nautobot_consumables import views
@@ -37,6 +39,11 @@ urlpatterns = [
         "locations/<slug:slug>/consumables",
         views.LocationConsumablesViewTab.as_view(),
         name="location_consumables_tab",
+    ),
+    path(
+        "docs/",
+        RedirectView.as_view(url=static("nautobot_consumables/docs/index.html")),
+        name="docs",
     ),
 ]
 
