@@ -39,9 +39,11 @@ class DeviceViewTemplateExtensionsTestCase(ModelViewTestCase):
         """Test that the Consumables tab does not appear in the detail view."""
         location = Location.objects.filter(
             consumable_pools__isnull=True,
-            location_type__nestable=True
+            location_type__nestable=True,
         ).first()
-        site = location.ancestors().filter(site__isnull=False).first().site
+        site = location.site
+        if site is None:
+            site = location.ancestors().filter(site__isnull=False).first().site
 
         instance = self.model.objects.create(
             name="Test Device",
