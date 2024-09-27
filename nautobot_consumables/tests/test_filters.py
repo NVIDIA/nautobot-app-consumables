@@ -15,7 +15,7 @@
 #
 
 """Tests for filters defined in the Nautobot Consumables app."""
-from nautobot.utilities.testing import FilterTestCases
+from nautobot.core.testing import FilterTestCases
 
 from nautobot_consumables import filters, models
 

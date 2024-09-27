@@ -18,6 +18,7 @@
 from typing import Any
 
 from django import forms
+from nautobot.core.forms import DynamicModelChoiceField, DynamicModelMultipleChoiceField
 from nautobot.dcim.models import Device, Location, Manufacturer
 from nautobot.extras.forms import (
     CustomFieldModelCSVForm,
@@ -27,7 +28,6 @@ from nautobot.extras.forms import (
     NautobotModelForm,
     TagsBulkEditFormMixin,
 )
-from nautobot.utilities.forms import DynamicModelChoiceField, DynamicModelMultipleChoiceField
 
 from nautobot_consumables import models
 from nautobot_consumables.fields import ConsumablesTypeJSONField

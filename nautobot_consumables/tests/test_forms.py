@@ -17,8 +17,8 @@
 """Tests for forms defined in the Nautobot Consumables app."""
 import json
 
+from nautobot.core.testing import TestCase
 from nautobot.dcim.models import Device, Location, Manufacturer
-from nautobot.utilities.testing import TestCase
 
 from nautobot_consumables import forms, models
 

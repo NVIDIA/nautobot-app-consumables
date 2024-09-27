@@ -26,9 +26,9 @@ from jsonschema import draft4_format_checker  # pylint: disable=no-name-in-modul
 from jsonschema.exceptions import SchemaError, ValidationError as JSONSchemaValidationError
 from jsonschema.validators import Draft4Validator
 
+from nautobot.core.models.fields import NaturalOrderingField
 from nautobot.core.models.generics import PrimaryModel
 from nautobot.extras.utils import extras_features
-from nautobot.utilities.fields import NaturalOrderingField
 
 
 def get_key_detail(key: str, value: Any, schema: Any) -> dict[str, Any]:

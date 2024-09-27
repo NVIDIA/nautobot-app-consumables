@@ -20,9 +20,9 @@ import json
 
 from django.contrib.contenttypes.models import ContentType
 from django.test.utils import override_settings
+from nautobot.core.testing import ViewTestCases, extract_page_body
 from nautobot.dcim.models import Device, Location, Manufacturer
 from nautobot.users.models import ObjectPermission
-from nautobot.utilities.testing import ViewTestCases, extract_page_body
 
 from nautobot_consumables import models
 
