@@ -6,12 +6,10 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches:
-      - "main"
-      - "dev"
-      - "ltm-*"
-  pull_request: ~
+  pull_request:
+    paths:
+      - "nautobot_consumables/**"
+      - "!nautobot_consumables/templates/**"
   workflow_dispatch:
 
 env:
