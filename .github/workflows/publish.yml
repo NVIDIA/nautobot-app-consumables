@@ -21,7 +21,7 @@ jobs:
     name: "Build new release packages"
     runs-on: "ubuntu-20.04"
     env:
-      INVOKE_NAUTOBOT_FSUS_LOCAL: "True"
+      INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
     steps:
       - name: "Check out repository"
         uses: "actions/checkout@v4"

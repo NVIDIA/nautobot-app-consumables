@@ -21,7 +21,7 @@ jobs:
   bandit:
     runs-on: "ubuntu-20.04"
     env:
-      INVOKE_NAUTOBOT_FSUS_LOCAL: "True"
+      INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
     steps:
       - name: "Check out repository"
         uses: "actions/checkout@v4"
@@ -33,7 +33,7 @@ jobs:
   pydocstyle:
     runs-on: "ubuntu-20.04"
     env:
-      INVOKE_NAUTOBOT_FSUS_LOCAL: "True"
+      INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
     steps:
       - name: "Check out repository"
         uses: "actions/checkout@v4"
@@ -45,7 +45,7 @@ jobs:
   flake8:
     runs-on: "ubuntu-20.04"
     env:
-      INVOKE_NAUTOBOT_FSUS_LOCAL: "True"
+      INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
     steps:
       - name: "Check out repository"
         uses: "actions/checkout@v4"
@@ -57,7 +57,7 @@ jobs:
   mypy:
     runs-on: "ubuntu-20.04"
     env:
-      INVOKE_NAUTOBOT_FSUS_LOCAL: "True"
+      INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
     steps:
       - name: "Check out repository"
         uses: "actions/checkout@v4"
@@ -69,7 +69,7 @@ jobs:
   poetry:
     runs-on: "ubuntu-20.04"
     env:
-      INVOKE_NAUTOBOT_FSUS_LOCAL: "True"
+      INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
     steps:
       - name: "Check out repository"
         uses: "actions/checkout@v4"
@@ -92,8 +92,8 @@ jobs:
         python-version: ["3.10"]
         nautobot-version: ["1.6.28"]
     env:
-      INVOKE_NAUTOBOT_FSUS_PYTHON_VER: "${{ matrix.python-version }}"
-      INVOKE_NAUTOBOT_FSUS_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"
+      INVOKE_NAUTOBOT_CONSUMABLES_PYTHON_VER: "${{ matrix.python-version }}"
+      INVOKE_NAUTOBOT_CONSUMABLES_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"
     steps:
       - name: "Check out repository"
         uses: "actions/checkout@v4"
@@ -101,7 +101,7 @@ jobs:
         uses: "./.github/actions/poetry"
       - name: "Generate lock file with constrained Nautobot version"
         env:
-          INVOKE_NAUTOBOT_FSUS_LOCAL: "True"
+          INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
         run: poetry run invoke lock --constrain-nautobot-ver --constrain-python-ver
       - name: "Setup Docker buildx"
         id: "buildx"
@@ -139,8 +139,8 @@ jobs:
         db-backend: ["postgresql", "mysql"]
         nautobot-version: ["1.6.28"]
     env:
-      INVOKE_NAUTOBOT_FSUS_PYTHON_VER: "${{ matrix.python-version }}"
-      INVOKE_NAUTOBOT_FSUS_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"
+      INVOKE_NAUTOBOT_CONSUMABLES_PYTHON_VER: "${{ matrix.python-version }}"
+      INVOKE_NAUTOBOT_CONSUMABLES_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"
     steps:
       - name: "Check out repository"
         uses: "actions/checkout@v4"
@@ -148,7 +148,7 @@ jobs:
         uses: "./.github/actions/poetry"
       - name: "Generate lock file with constrained Nautobot version"
         env:
-          INVOKE_NAUTOBOT_FSUS_LOCAL: "True"
+          INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
         run: poetry run invoke lock --constrain-nautobot-ver --constrain-python-ver
       - name: "Setup Docker buildx"
         id: "buildx"
