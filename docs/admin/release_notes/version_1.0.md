@@ -1,5 +1,5 @@
 # v1.0 Release Notes
 
-## [1.0.0] - 2024-XX-XX
+## [1.0.0 (2024-09-18)](https://github.com/NVIDIA/nautobot-app-fsus/releases/tag/v1.0.0)
 
-- Initial release
+- Initial release compatible with Nautobot 1.6.1+
