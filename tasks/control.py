@@ -372,6 +372,14 @@ def makemigrations(context: Context, name: str | None = None) -> None:
     helpers.run_command(context, " ".join(command))
 
 
+@task
+def check_migrations(context: Context) -> None:
+    """Check for missing migrations."""
+    command = "nautobot-server makemigrations --dry-run --check"
+
+    helpers.run_command(context, command)
+
+
 @task(
     help={
         "plan": "List all migrations in the order they will be applied.",
