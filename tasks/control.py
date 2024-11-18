@@ -47,11 +47,7 @@ def build(context: Context, force_rm: bool = False, cache: bool = True) -> None:
     helpers.docker_compose(context, " ".join(command))
 
 
-@task(
-    help={
-        "local": "Force the command to run locally instead of in the service container."
-    }
-)
+@task
 def mkdocs(context: Context) -> None:
     """Runs `mkdocs` to create the static documentation for the plugin."""
     command = "mkdocs build --no-directory-urls --strict"
