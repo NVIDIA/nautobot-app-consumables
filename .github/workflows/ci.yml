@@ -1,5 +1,5 @@
 ---
-name: "CICD Nautobot Consumables"
+name: "Linting and Testing"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
