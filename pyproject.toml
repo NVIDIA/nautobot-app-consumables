@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nautobot-consumables"
-version = "1.0.0a1"
+version = "1.0.1a0"
 description = "Consumables Tracking for Nautobot"
 authors = ["Mark Troyer <mtroyer@nvidia.com>"]
 maintainers = ["Mark Troyer <mtroyer@nvidia.com>"]
