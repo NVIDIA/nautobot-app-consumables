@@ -15,6 +15,7 @@
 #
 
 """API endpoint views for Nautobot Consumables."""
+
 from nautobot.apps.api import NautobotModelViewSet
 
 from nautobot_consumables import filters, models

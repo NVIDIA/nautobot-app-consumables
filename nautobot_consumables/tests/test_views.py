@@ -15,6 +15,7 @@
 #
 
 """Tests for views defined in the Nautobot Consumables app."""
+
 from copy import copy
 import json
 
@@ -48,8 +49,8 @@ class CheckedOutConsumableViewTestCase(
         """Set up base data for the tests."""
         pools = [
             models.ConsumablePool.objects.last(),
-            models.ConsumablePool.objects.get(name='Generic 4 Pool 1'),
-            models.ConsumablePool.objects.get(name='Generic 5 Pool 1'),
+            models.ConsumablePool.objects.get(name="Generic 4 Pool 1"),
+            models.ConsumablePool.objects.get(name="Generic 5 Pool 1"),
         ]
         cls.form_data = {
             "consumable_pool": pools[0].pk,
@@ -155,7 +156,7 @@ class ConsumableViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             f'<td class="min-width"><input type="checkbox" name="pk" '
             f'value="{instance.pools.first().pk}" /></td>',
             response_body,
-            msg=response_body
+            msg=response_body,
         )
 
         obj_perm.object_types.add(ContentType.objects.get_for_model(models.ConsumablePool))
@@ -170,7 +171,7 @@ class ConsumableViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             f'<td class="min-width"><input type="checkbox" name="pk" '
             f'value="{instance.pools.first().pk}" /></td>',
             response_body,
-            msg=response_body
+            msg=response_body,
         )
 
     @override_settings(EXEMPT_VIEW_PERMISSIONS=["*"])
@@ -245,7 +246,7 @@ class ConsumablePoolViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             f'<td class="min-width"><input type="checkbox" name="pk" '
             f'value="{instance.checked_out.first().pk}" /></td>',
             response_body,
-            msg=response_body
+            msg=response_body,
         )
 
         obj_perm.object_types.add(ContentType.objects.get_for_model(models.CheckedOutConsumable))
@@ -260,7 +261,7 @@ class ConsumablePoolViewTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             f'<td class="min-width"><input type="checkbox" name="pk" '
             f'value="{instance.checked_out.first().pk}" /></td>',
             response_body,
-            msg=response_body
+            msg=response_body,
         )
 
 
@@ -278,16 +279,18 @@ class ConsumableTypeViewTestCase(
     model = models.ConsumableType
     form_data = {
         "name": "Test Consumable 4",
-        "schema": json.dumps({
-            "type": "object",
-            "title": "Test Consumable Schema",
-            "properties": {
-                "unit": {
-                    "type": "string",
-                    "title": "Unit",
+        "schema": json.dumps(
+            {
+                "type": "object",
+                "title": "Test Consumable Schema",
+                "properties": {
+                    "unit": {
+                        "type": "string",
+                        "title": "Unit",
+                    },
                 },
-            },
-        }),
+            }
+        ),
     }
 
     @classmethod
@@ -319,7 +322,7 @@ class ConsumableTypeViewTestCase(
             f'<td class="min-width"><input type="checkbox" name="pk" '
             f'value="{test_consumable.pk}" /></td>',
             response_body,
-            msg=response_body
+            msg=response_body,
         )
 
         obj_perm.object_types.add(ContentType.objects.get_for_model(models.Consumable))
@@ -334,5 +337,5 @@ class ConsumableTypeViewTestCase(
             f'<td class="min-width"><input type="checkbox" name="pk" '
             f'value="{test_consumable.pk}" /></td>',
             response_body,
-            msg=response_body
+            msg=response_body,
         )

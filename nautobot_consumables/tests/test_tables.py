@@ -15,6 +15,7 @@
 #
 
 """Tests for tables defined in the Nautobot Consumables app."""
+
 from django.test import TestCase
 
 from nautobot_consumables import tables

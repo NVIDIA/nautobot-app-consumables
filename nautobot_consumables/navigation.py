@@ -15,6 +15,7 @@
 #
 
 """Add Nautobot Consumables views to the navigation menus."""
+
 from nautobot.apps.ui import (
     NavMenuAddButton,
     NavMenuGroup,
