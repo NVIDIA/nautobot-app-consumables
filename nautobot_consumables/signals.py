@@ -15,12 +15,13 @@
 #
 
 """Signal handlers for Nautobot Consumables app."""
+
 import logging
 from typing import TypedDict
 
 from nautobot.apps.choices import (
-    ColorChoices,
     CableTypeChoices,
+    ColorChoices,
     InterfaceTypeChoices,
     PortTypeChoices,
 )
@@ -32,6 +33,7 @@ logger = logging.getLogger("rq.worker")
 
 class JSONSchemaData(TypedDict, total=False):
     """Represents the JSON schema dict with types."""
+
     title: str
     type: str
     propertyOrder: int  # pylint: disable=invalid-name

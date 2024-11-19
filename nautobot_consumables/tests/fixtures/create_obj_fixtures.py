@@ -121,7 +121,7 @@ def create_consumable_pools(consumables: list[list[models.Consumable]]):
                 quantity=num * consumable_num * 13,
             )
 
-            if num > 3:
+            if num > 3:  # noqa: PLR2004
                 continue
 
             models.CheckedOutConsumable.objects.get_or_create(

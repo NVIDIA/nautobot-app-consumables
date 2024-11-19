@@ -15,6 +15,7 @@
 #
 
 """Models for Nautobot Consumables Tracking."""
+
 from typing import Any
 
 from django.core.exceptions import ValidationError
@@ -22,9 +23,9 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import ForeignKey
 from jsonschema import draft4_format_checker  # pylint: disable=no-name-in-module
-from jsonschema.exceptions import SchemaError, ValidationError as JSONSchemaValidationError
+from jsonschema.exceptions import SchemaError
+from jsonschema.exceptions import ValidationError as JSONSchemaValidationError
 from jsonschema.validators import Draft4Validator
-
 from nautobot.core.models.fields import NaturalOrderingField
 from nautobot.core.models.generics import PrimaryModel
 from nautobot.extras.utils import extras_features
@@ -61,6 +62,7 @@ class JSONModel(PrimaryModel):
 
     class Meta:
         """Metaclass attributes."""
+
         abstract = True
 
     @property
@@ -75,7 +77,7 @@ class JSONModel(PrimaryModel):
 
         # Find any properties named "*_unit" and combine their values with the corresponding
         # property value, e.g. `length = 1` and `length_unit = "ft"` combine to `1 ft`
-        assert isinstance(self.schema, dict)
+        assert isinstance(self.schema, dict)  # noqa: S101
         for unit_key in [key for key in self.schema.get("properties", {}) if key.endswith("unit")]:
             prop = unit_key.strip("_unit")
             if self.schema.get("properties", {}).get(prop):

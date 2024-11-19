@@ -15,7 +15,8 @@
 #
 
 """Filters for Nautobot Consumables models."""
-from nautobot.apps.filters import SearchFilter, NautobotFilterSet
+
+from nautobot.apps.filters import NautobotFilterSet, SearchFilter
 
 from nautobot_consumables.models import (
     CheckedOutConsumable,
