@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 env:
-  APP_NAME: "nautobot-consumables"
+  APP_NAME: "consumables"
 
 jobs:
   bandit:
