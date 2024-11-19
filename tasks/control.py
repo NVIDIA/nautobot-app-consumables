@@ -85,7 +85,7 @@ def lock(context: Context, check: bool = False, constrain_nautobot_ver: bool = F
         if check:
             command.append("check")
         else:
-            command.extend(["lock", "--noupdate"])
+            command.extend(["lock", "--no-update"])
 
     helpers.run_command(context, " ".join(command))
 
@@ -402,7 +402,7 @@ def showmigrations(context: Context, plan: bool = False, verbose: bool = False) 
 
 
 @task
-def migrate(context) -> None:
+def migrate(context: Context) -> None:
     """Perform the Django migrate operation."""
     helpers.run_command(context, "nautobot-server migrate")
 
