@@ -18,16 +18,16 @@
 from typing import Any
 
 from django import forms
-from nautobot.dcim.models import Device, Location, Manufacturer
-from nautobot.extras.forms import (
-    CustomFieldModelCSVForm,
+from nautobot.apps.forms import (
     CustomFieldModelFilterFormMixin,
+    DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
     NautobotBulkEditForm,
     NautobotFilterForm,
     NautobotModelForm,
     TagsBulkEditFormMixin,
 )
-from nautobot.utilities.forms import DynamicModelChoiceField, DynamicModelMultipleChoiceField
+from nautobot.dcim.models import Device, Location, Manufacturer
 
 from nautobot_consumables import models
 from nautobot_consumables.fields import ConsumablesTypeJSONField
@@ -76,16 +76,6 @@ class CheckedOutConsumableBulkEditForm(NautobotBulkEditForm, TagsBulkEditFormMix
         """CheckedOutConsumableBulkEditForm model options."""
 
 
-class CheckedOutConsumableCSVForm(CustomFieldModelCSVForm):
-    """Form for importing a CheckedOutConsumable from a CSV file."""
-
-    class Meta:
-        """CheckedOutConsumableCSVForm model options."""
-
-        model = models.CheckedOutConsumable
-        fields = models.CheckedOutConsumable.csv_headers
-
-
 class CheckedOutConsumableFilterForm(NautobotFilterForm, CustomFieldModelFilterFormMixin):
     """Form for filtering CheckedOutConsumable instances."""
 
@@ -124,7 +114,7 @@ class CheckedOutConsumableForm(ConsumablesBaseModelForm):
         """CheckedOutConsumableForm model options."""
 
         model = models.CheckedOutConsumable
-        fields = [*models.CheckedOutConsumable.csv_headers, "tags"]
+        fields = ["consumable_pool", "device", "quantity", "tags"]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize form and check for proper fields for the assigned consumable_pool."""
@@ -172,16 +162,6 @@ class ConsumableBulkEditForm(NautobotBulkEditForm, TagsBulkEditFormMixin):
         """ConsumableBulkEditForm model options."""
 
 
-class ConsumableCSVForm(CustomFieldModelCSVForm):
-    """Form for importing a Consumable from a CSV file."""
-
-    class Meta:
-        """ConsumableCSVForm model options."""
-
-        model = models.Consumable
-        fields = models.Consumable.csv_headers
-
-
 class ConsumableFilterForm(NautobotFilterForm, CustomFieldModelFilterFormMixin):
     """Form for filtering Consumable instances."""
 
@@ -214,7 +194,7 @@ class ConsumableForm(ConsumablesBaseModelForm, ConsumableJSONFormMixin):
         """ConsumableForm model options."""
 
         model = models.Consumable
-        fields = [*models.Consumable.csv_headers, "tags"]
+        fields = ["name", "consumable_type", "manufacturer", "product_id", "data", "tags"]
 
 
 # Consumable Pools
@@ -231,16 +211,6 @@ class ConsumablePoolBulkEditForm(NautobotBulkEditForm, TagsBulkEditFormMixin):
 
     class Meta:
         """ConsumablePoolBulkEditForm model options."""
-
-
-class ConsumablePoolCSVForm(CustomFieldModelCSVForm):
-    """Form for importing a ConsumablePool from a CSV file."""
-
-    class Meta:
-        """ConsumablePoolCSVForm model options."""
-
-        model = models.ConsumablePool
-        fields = models.ConsumablePool.csv_headers
 
 
 class ConsumablePoolFilterForm(NautobotFilterForm, CustomFieldModelFilterFormMixin):
@@ -272,7 +242,7 @@ class ConsumablePoolForm(ConsumablesBaseModelForm, ConsumableJSONFormMixin):
         """ConsumablePoolForm model options."""
 
         model = models.ConsumablePool
-        fields = [*models.ConsumablePool.csv_headers, "tags"]
+        fields = ["name", "consumable", "location", "quantity", "tags"]
 
 
 # Consumable Types
@@ -286,16 +256,6 @@ class ConsumableTypeBulkEditForm(NautobotBulkEditForm, TagsBulkEditFormMixin):
 
     class Meta:
         """ConsumableTypeBulkEditForm model options."""
-
-
-class ConsumableTypeCSVForm(CustomFieldModelCSVForm):
-    """Form for importing a ConsumableType from a CSV file."""
-
-    class Meta:
-        """ConsumableTypeCSVForm model options."""
-
-        model = models.ConsumableType
-        fields = models.ConsumableType.csv_headers
 
 
 class ConsumableTypeFilterForm(NautobotFilterForm):
@@ -317,4 +277,4 @@ class ConsumableTypeForm(NautobotModelForm, ConsumableJSONFormMixin):
         """ConsumableTypeForm model options."""
 
         model = models.ConsumableType
-        fields = [*models.ConsumableType.csv_headers, "tags"]
+        fields = ["name", "schema", "tags"]

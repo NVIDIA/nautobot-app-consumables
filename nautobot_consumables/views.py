@@ -20,7 +20,7 @@ from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from nautobot.core.views import generic
-from nautobot.core.views.viewsets import NautobotUIViewSet
+from nautobot.apps.views import NautobotUIViewSet
 from nautobot.dcim.models import Device, Location
 from nautobot.extras.models import CustomField
 
@@ -32,7 +32,6 @@ class CheckedOutConsumableUIViewSet(NautobotUIViewSet):
     """UI view set for CheckedOutConsumables."""
 
     action_buttons = ("export",)
-    bulk_create_form_class = forms.CheckedOutConsumableCSVForm
     bulk_update_form_class = forms.CheckedOutConsumableBulkEditForm
     filterset_class = filters.CheckedOutConsumableFilterSet
     filterset_form_class = forms.CheckedOutConsumableFilterForm
@@ -60,7 +59,6 @@ class CheckedOutConsumableUIViewSet(NautobotUIViewSet):
 class ConsumableUIViewSet(NautobotUIViewSet):
     """UI view set for Consumables."""
 
-    bulk_create_form_class = forms.ConsumableCSVForm
     bulk_update_form_class = forms.ConsumableBulkEditForm
     filterset_class = filters.ConsumableFilterSet
     filterset_form_class = forms.ConsumableFilterForm
@@ -102,7 +100,6 @@ class ConsumableUIViewSet(NautobotUIViewSet):
 class ConsumablePoolUIViewSet(NautobotUIViewSet):
     """UI view set for ConsumablePools."""
 
-    bulk_create_form_class = forms.ConsumablePoolCSVForm
     bulk_update_form_class = forms.ConsumablePoolBulkEditForm
     filterset_class = filters.ConsumablePoolFilterSet
     filterset_form_class = forms.ConsumablePoolFilterForm
@@ -156,7 +153,7 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
         new_quantity: int | None = form.cleaned_data.get("quantity", None)
         nullified_fields = request.POST.getlist("_nullify")
         form_cf_to_key = {
-            f"cf_{cf.slug}": cf.name for cf in CustomField.objects.get_for_model(queryset.model)
+            f"cf_{cf.key}": cf.name for cf in CustomField.objects.get_for_model(queryset.model)
         }
 
         with transaction.atomic():
@@ -212,7 +209,6 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
 class ConsumableTypeUIViewSet(NautobotUIViewSet):
     """UI view set for ConsumableTypes."""
 
-    bulk_create_form_class = forms.ConsumableTypeCSVForm
     bulk_update_form_class = forms.ConsumableTypeBulkEditForm
     filterset_class = filters.ConsumableTypeFilterSet
     filterset_form_class = forms.ConsumableTypeFilterForm
@@ -306,7 +302,7 @@ class LocationConsumablesViewTab(generic.ObjectView):
 
         return_url = [reverse(
             "plugins:nautobot_consumables:location_consumables_tab",
-            kwargs={"slug": instance.slug},
+            kwargs={"pk": instance.pk},
         ), "tab=nautobot_consumables:1"]
         context["return_url"] = "?".join(return_url)
 

@@ -19,7 +19,7 @@
 from importlib import metadata
 
 from django.db.models.signals import post_migrate
-from nautobot.extras.plugins import NautobotAppConfig
+from nautobot.apps import NautobotAppConfig
 
 dist = metadata.distribution(__name__)
 __version__ = dist.metadata.get("Version")  # type: ignore[attr-defined]
@@ -37,8 +37,8 @@ class NautobotConsumablesConfig(NautobotAppConfig):
     base_url = "consumables"
     docs_view_name = "plugins:nautobot_consumables:docs"
     required_settings: list[str] = []
-    min_version: str = "1.6.1"
-    max_version: str = "1.9999"
+    min_version: str = "2.0.0"
+    max_version: str = "2.9999"
     caching_config: dict[str, str | dict[str, str]] = {}
 
     def ready(self) -> None:

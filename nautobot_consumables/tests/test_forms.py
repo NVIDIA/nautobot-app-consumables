@@ -17,8 +17,8 @@
 """Tests for forms defined in the Nautobot Consumables app."""
 import json
 
+from nautobot.core.testing import TestCase
 from nautobot.dcim.models import Device, Location, Manufacturer
-from nautobot.utilities.testing import TestCase
 
 from nautobot_consumables import forms, models
 
@@ -64,19 +64,6 @@ class CheckedOutConsumableFormsTestCase(TestCase):
 
         self.assertTrue(form.is_valid())
 
-    def test_checkedoutconsumable_csv_form(self):
-        """Test creating a CSV form instance."""
-        pool = models.ConsumablePool.objects.last()
-        form = forms.CheckedOutConsumableCSVForm(
-            data={
-                "consumable_pool": pool.pk,
-                "device": Device.objects.filter(location=pool.location).first().pk,
-                "quantity": 5,
-            },
-        )
-
-        self.assertTrue(form.is_valid())
-
     def test_checkedoutconsumable_filter_form(self):
         """Test creating a Filter form instance."""
         form = forms.CheckedOutConsumableFilterForm(data={"device": [Device.objects.first().pk]})
@@ -118,20 +105,6 @@ class ConsumableFormsTestCase(TestCase):
 
         self.assertTrue(form.is_valid())
 
-    def test_consumable_csv_form(self):
-        """Test creating a CSV form instance."""
-        form = forms.ConsumableCSVForm(
-            data={
-                "name": "Test Consumable 2",
-                "consumable_type": models.ConsumableType.objects.get(name="Transceiver").pk,
-                "manufacturer": Manufacturer.objects.first().pk,
-                "product_id": "test0002",
-                "data": {"reach": "LR", "form_factor": "QSFP-DD (400GE)"},
-            },
-        )
-
-        self.assertTrue(form.is_valid())
-
     def test_consumable_filter_form(self):
         """Test creating a Filter form instance."""
         form = forms.ConsumableFilterForm(data={"name": "Cable 1"})
@@ -168,19 +141,6 @@ class ConsumablePoolFormsTestCase(TestCase):
         form = forms.ConsumablePoolBulkEditForm(
             model=models.ConsumablePool,
             data={"pk": [i.pk for i in models.ConsumablePool.objects.all()]},
-        )
-
-        self.assertTrue(form.is_valid())
-
-    def test_consumablepool_csv_form(self):
-        """Test creating a CSV form instance."""
-        form = forms.ConsumablePoolCSVForm(
-            data={
-                "name": "Test Pool 2",
-                "consumable": models.Consumable.objects.last().pk,
-                "location": Location.objects.last().pk,
-                "quantity": 50,
-            },
         )
 
         self.assertTrue(form.is_valid())
@@ -238,14 +198,6 @@ class ConsumableTypeFormsTestCase(TestCase):
         form = forms.ConsumableTypeBulkEditForm(
             model=models.ConsumableType,
             data={"pk": [i.pk for i in models.ConsumableType.objects.all()]},
-        )
-
-        self.assertTrue(form.is_valid())
-
-    def test_consumabletype_csv_form(self):
-        """Test creating a CSV form instance."""
-        form = forms.ConsumableTypeCSVForm(
-            data={"name": "Test Consumable 2", "schema": {}},
         )
 
         self.assertTrue(form.is_valid())

@@ -5,9 +5,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import MinValueValidator
 from django.db import migrations, models
 from django.db.models import deletion
+from nautobot.core.models.fields import NaturalOrderingField
+from nautobot.core.models.ordering import naturalize
 from nautobot.extras.models.mixins import DynamicGroupMixin, NotesMixin
-from nautobot.utilities.fields import NaturalOrderingField
-from nautobot.utilities.ordering import naturalize
 from taggit.managers import TaggableManager
 
 

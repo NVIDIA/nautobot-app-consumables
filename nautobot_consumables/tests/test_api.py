@@ -16,8 +16,8 @@
 
 """Test the Nautobot Consumables API endpoints."""
 from django.contrib.auth import get_user_model
+from nautobot.core.testing.api import APIViewTestCases
 from nautobot.dcim.models import Device, Location, Manufacturer
-from nautobot.utilities.testing.api import APIViewTestCases
 
 from nautobot_consumables import models
 

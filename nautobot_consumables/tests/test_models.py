@@ -18,14 +18,8 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from nautobot.dcim.models import (
-    Device,
-    DeviceRole,
-    DeviceType,
-    Location,
-    LocationType,
-    Manufacturer,
-)
+from nautobot.dcim.models import Device, DeviceType, Location, LocationType, Manufacturer
+from nautobot.extras.models import Role, Status
 
 from nautobot_consumables import models
 
@@ -72,13 +66,6 @@ class ConsumableTypeTestCase(TestCase):
             "'imaginary' is not valid under any of the given schemas on ['type']"
         )
 
-    def test_export_instance(self):
-        """Test exporting the model to CSV."""
-        csv = self.consumable_type.to_csv()
-        self.assertIsInstance(csv, tuple)
-        self.assertEqual(len(csv), 2)
-        self.assertEqual(csv[0], self.consumable_type.name)
-
 
 class ConsumableTestCase(TestCase):
     """Tests for the Consumable model."""
@@ -115,13 +102,6 @@ class ConsumableTestCase(TestCase):
         self.consumable.consumable_type = models.ConsumableType.objects.get(name="Generic")
         with self.assertRaises(ValidationError):
             self.consumable.validated_save()
-
-    def test_export_instance(self):
-        """Test exporting the model to CSV."""
-        csv = self.consumable.to_csv()
-        self.assertIsInstance(csv, tuple)
-        self.assertEqual(len(csv), 5)
-        self.assertEqual(csv[3], "R2D2")
 
     def test_template_details(self):
         """Test the generated template details property."""
@@ -201,13 +181,6 @@ class ConsumablePoolTestCase(TestCase):
         with self.assertRaises(ValidationError):
             self.consumable_pool.validated_save()
 
-    def test_export_instance(self):
-        """Test exporting the model to CSV."""
-        csv = self.consumable_pool.to_csv()
-        self.assertIsInstance(csv, tuple)
-        self.assertEqual(len(csv), 4)
-        self.assertEqual(csv[0], self.consumable_pool.name)
-
     def test_used_and_available(self):
         """Test the used_quantity and available_quantity properties."""
         self.consumable_pool.validated_save()
@@ -240,9 +213,9 @@ class CheckedOutConsumableTestCase(TestCase):
         cls.device = Device.objects.create(
             name="Test Device",
             device_type=DeviceType.objects.first(),
-            device_role=DeviceRole.objects.first(),
-            site=cls.pool.location.base_site,
+            role=Role.objects.first(),
             location=cls.pool.location,
+            status=Status.objects.get_for_model(Device).first(),
         )
 
     def test_validated_save(self):
@@ -319,15 +292,3 @@ class CheckedOutConsumableTestCase(TestCase):
             f"Consumable pool does not have enough available capacity, requesting "
             f"{checked_out_consumable.quantity}, only {pool.available_quantity + 5} available.",
         )
-
-    def test_export_instance(self):
-        """Test exporting the model to CSV."""
-        checked_out_consumable, _ = models.CheckedOutConsumable.objects.get_or_create(
-            consumable_pool=self.pool,
-            device=self.device,
-            quantity=5,
-        )
-        csv = checked_out_consumable.to_csv()
-        self.assertIsInstance(csv, tuple)
-        self.assertEqual(len(csv), 3)
-        self.assertEqual(csv[2], 5)

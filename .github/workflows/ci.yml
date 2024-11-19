@@ -1,21 +1,19 @@
 ---
-name: "CICD Nautobot Consumables"
+name: "Linting and Testing"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 on:
-  push:
-    branches:
-      - "main"
-      - "dev"
-      - "ltm-*"
-  pull_request: ~
+  pull_request:
+    paths:
+      - "nautobot_consumables/**"
+      - "!nautobot_consumables/templates/**"
   workflow_dispatch:
 
 env:
-  APP_NAME: "nautobot-consumables"
+  APP_NAME: "consumables"
 
 jobs:
   bandit:
@@ -89,8 +87,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.10"]
-        nautobot-version: ["1.6.28"]
+        python-version: ["3.12"]
+        nautobot-version: ["stable"]
     env:
       INVOKE_NAUTOBOT_CONSUMABLES_PYTHON_VER: "${{ matrix.python-version }}"
       INVOKE_NAUTOBOT_CONSUMABLES_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"
@@ -135,9 +133,16 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.10"]
-        db-backend: ["postgresql", "mysql"]
-        nautobot-version: ["1.6.28"]
+        python-version: ["3.11", "3.12"]
+        db-backend: ["postgresql"]
+        nautobot-version: ["stable"]
+        include:
+          - python-version: ["3.11"]
+            db-backend: ["postgresql"]
+            nautobot-version: ["2.0.6"]
+          - python-version: ["3.12"]
+            db-backend: ["mysql"]
+            nautobot-version: ["stable"]
     env:
       INVOKE_NAUTOBOT_CONSUMABLES_PYTHON_VER: "${{ matrix.python-version }}"
       INVOKE_NAUTOBOT_CONSUMABLES_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"

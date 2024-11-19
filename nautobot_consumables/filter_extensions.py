@@ -15,9 +15,8 @@
 #
 
 """Extensions to add filtering for available and used consumables to Devices and Locations."""
-from nautobot.apps.filters import FilterExtension
+from nautobot.apps.filters import FilterExtension, RelatedMembershipBooleanFilter
 from nautobot.dcim.models import Device, Location
-from nautobot.utilities.filters import RelatedMembershipBooleanFilter
 
 
 class DeviceFilterExtension(FilterExtension):  # pylint: disable=too-few-public-methods

@@ -75,7 +75,6 @@ class LocationConsumablesCount(TemplateExtension):
 
     model = "dcim.location"
     obj_pk: UUID
-    obj_slug: str
     pools_count: int
 
     def __init__(self, context: Any) -> None:
@@ -83,7 +82,6 @@ class LocationConsumablesCount(TemplateExtension):
         super().__init__(context)
 
         self.obj_pk = context["object"].pk
-        self.obj_slug = context["object"].slug
         self.pools_count = ConsumablePool.objects.filter(location__pk=self.obj_pk).count()
 
     def detail_tabs(self):
@@ -99,7 +97,7 @@ class LocationConsumablesCount(TemplateExtension):
                     ),
                     "url": reverse(
                         "plugins:nautobot_consumables:location_consumables_tab",
-                        kwargs={"slug": self.obj_slug},
+                        kwargs={"pk": self.obj_pk},
                     ),
                 },
             )

@@ -1,11 +1,11 @@
 """Tests for template extensions defined in the Consumables app."""
 from django.contrib.contenttypes.models import ContentType
 from django.test.utils import override_settings
-from nautobot.dcim.models import Device, DeviceRole, DeviceType, Location
+from nautobot.core.testing import extract_page_body
+from nautobot.core.testing.views import ModelViewTestCase
+from nautobot.dcim.models import Device, DeviceType, Location, LocationType
 from nautobot.users.models import ObjectPermission
-from nautobot.extras.models import Status
-from nautobot.utilities.testing import extract_page_body
-from nautobot.utilities.testing.views import ModelViewTestCase
+from nautobot.extras.models import Role, Status
 
 
 class DeviceViewTemplateExtensionsTestCase(ModelViewTestCase):
@@ -39,17 +39,15 @@ class DeviceViewTemplateExtensionsTestCase(ModelViewTestCase):
         """Test that the Consumables tab does not appear in the detail view."""
         location = Location.objects.filter(
             consumable_pools__isnull=True,
-            location_type__nestable=True,
+            location_type__in=LocationType.objects.filter(
+                content_types__in=[ContentType.objects.get_for_model(self.model)]
+            )
         ).first()
-        site = location.site
-        if site is None:
-            site = location.ancestors().filter(site__isnull=False).first().site
 
         instance = self.model.objects.create(
             name="Test Device",
             device_type=DeviceType.objects.first(),
-            device_role=DeviceRole.objects.first(),
-            site=site,
+            role=Role.objects.first(),
             location=location,
             status=Status.objects.get_for_model(self.model).first(),
         )

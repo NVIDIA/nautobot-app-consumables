@@ -15,11 +15,10 @@
 #
 
 """Add Nautobot Consumables views to the navigation menus."""
-from nautobot.core.apps import (
+from nautobot.apps.ui import (
     NavMenuAddButton,
     NavMenuGroup,
     NavMenuItem,
-    NavMenuImportButton,
     NavMenuTab,
 )
 
@@ -40,10 +39,6 @@ menu_items = (
                                 link="plugins:nautobot_consumables:consumabletype_add",
                                 permissions=["nautobot_consumables.add_consumabletype"],
                             ),
-                            NavMenuImportButton(
-                                link="plugins:nautobot_consumables:consumabletype_import",
-                                permissions=["nautobot_consumables.add_consumabletype"],
-                            ),
                         ],
                     ),
                     NavMenuItem(
@@ -55,10 +50,6 @@ menu_items = (
                                 link="plugins:nautobot_consumables:consumable_add",
                                 permissions=["nautobot_consumables.add_consumable"],
                             ),
-                            NavMenuImportButton(
-                                link="plugins:nautobot_consumables:consumabletype_import",
-                                permissions=["nautobot_consumables.add_consumabletype"],
-                            ),
                         ],
                     ),
                     NavMenuItem(
@@ -68,10 +59,6 @@ menu_items = (
                         buttons=[
                             NavMenuAddButton(
                                 link="plugins:nautobot_consumables:consumablepool_add",
-                                permissions=["nautobot_consumables.add_consumablepool"],
-                            ),
-                            NavMenuImportButton(
-                                link="plugins:nautobot_consumables:consumablepool_import",
                                 permissions=["nautobot_consumables.add_consumablepool"],
                             ),
                         ],

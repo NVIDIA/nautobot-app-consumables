@@ -21,14 +21,13 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import ForeignKey
-from django.urls import reverse
 from jsonschema import draft4_format_checker  # pylint: disable=no-name-in-module
 from jsonschema.exceptions import SchemaError, ValidationError as JSONSchemaValidationError
 from jsonschema.validators import Draft4Validator
 
+from nautobot.core.models.fields import NaturalOrderingField
 from nautobot.core.models.generics import PrimaryModel
 from nautobot.extras.utils import extras_features
-from nautobot.utilities.fields import NaturalOrderingField
 
 
 def get_key_detail(key: str, value: Any, schema: Any) -> dict[str, Any]:
@@ -125,8 +124,6 @@ class ConsumableType(JSONModel):
     name = models.CharField(max_length=100, db_index=True, unique=True)
     _name = NaturalOrderingField(target_field="name", max_length=255, blank=True, db_index=True)
 
-    csv_headers = ["name", "schema"]
-
     class Meta:
         """ConsumableType model options."""
         verbose_name = "Consumable Type"
@@ -135,14 +132,6 @@ class ConsumableType(JSONModel):
     def __str__(self) -> str:
         """Default string representation of the ConsumableType."""
         return str(self.name)
-
-    def get_absolute_url(self) -> str:
-        """Calculate the absolute URL of a ConsumableType instance."""
-        return reverse("plugins:nautobot_consumables:consumabletype", kwargs={"pk": self.pk})
-
-    def to_csv(self) -> tuple[str, str]:
-        """Return a tuple of model values suitable for exporting to CSV."""
-        return self.name, str(self.schema)
 
 
 class Consumable(JSONModel):
@@ -175,8 +164,6 @@ class Consumable(JSONModel):
         verbose_name="Product ID",
     )
 
-    csv_headers = ["name", "consumable_type", "manufacturer", "product_id", "data"]
-
     class Meta:
         """Consumable model options."""
         unique_together = [["manufacturer", "consumable_type", "product_id"]]
@@ -187,10 +174,6 @@ class Consumable(JSONModel):
     def __str__(self) -> str:
         """Default string representation of the Consumable."""
         return str(self.name)
-
-    def get_absolute_url(self) -> str:
-        """Calculate the absolute URL of a Consumable instance."""
-        return reverse("plugins:nautobot_consumables:consumable", kwargs={"pk": self.pk})
 
     def clean(self):
         """Validate a Consumable instance."""
@@ -218,16 +201,6 @@ class Consumable(JSONModel):
 
         super().save(*args, **kwargs)
 
-    def to_csv(self) -> tuple[str, ...]:
-        """Return a tuple of model values suitable for exporting to CSV."""
-        return (
-            self.name,
-            str(self.consumable_type.name),
-            str(self.manufacturer.name),
-            self.product_id,
-            str(self.data),
-        )
-
 
 @extras_features("custom_fields", "custom_links", "graphql", "relationships")
 class ConsumablePool(PrimaryModel):
@@ -254,8 +227,6 @@ class ConsumablePool(PrimaryModel):
 
     quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
 
-    csv_headers = ["name", "consumable", "location", "quantity"]
-
     class Meta:
         """ConsumablePool model options."""
         unique_together = [["consumable", "location", "name"]]
@@ -281,10 +252,6 @@ class ConsumablePool(PrimaryModel):
         """Calculate how many Consumable in the pool are available to be checked out."""
         return self.quantity - self.used_quantity
 
-    def get_absolute_url(self) -> str:
-        """Calculate the absolute URL of a ConsumablePool instance."""
-        return reverse("plugins:nautobot_consumables:consumablepool", kwargs={"pk": self.pk})
-
     def clean(self):
         """Validate a ConsumablePool instance."""
         super().clean()
@@ -295,15 +262,6 @@ class ConsumablePool(PrimaryModel):
                 raise ValidationError(
                     "Consumable cannot be changed after creation."
                 )
-
-    def to_csv(self) -> tuple[str, str, str, int]:
-        """Return a tuple of model values suitable for exporting to CSV."""
-        return (
-            self.name,
-            self.consumable.name,
-            self.location.name,
-            self.quantity,
-        )
 
 
 @extras_features("custom_fields", "custom_links", "graphql", "relationships")
@@ -324,8 +282,6 @@ class CheckedOutConsumable(PrimaryModel):
 
     quantity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
 
-    csv_headers = ["consumable_pool", "device", "quantity"]
-
     class Meta:
         """CheckedOutConsumable model options."""
 
@@ -341,18 +297,6 @@ class CheckedOutConsumable(PrimaryModel):
             self.consumable_pool.name if hasattr(self, "consumable_pool") else "No Pool"
         ]
         return " | ".join(parts)
-
-    def get_absolute_url(self) -> str:
-        """Calculate the absolute URL of a CheckedOutConsumable instance."""
-        return reverse("plugins:nautobot_consumables:checkedoutconsumable", kwargs={"pk": self.pk})
-
-    def to_csv(self) -> tuple[str, str, int]:
-        """Return a tuple of model values suitable for exporting to CSV."""
-        return (
-            self.device.name,
-            self.consumable_pool.name,
-            self.quantity,
-        )
 
     def clean(self):
         """Validate a CheckedOutConsumable instance."""
