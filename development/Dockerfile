@@ -28,7 +28,6 @@ WORKDIR $NAUTOBOT_ROOT
 # and CI and local development may have a newer version of Poetry
 # Since this is only used for development and we don't ship this container, pinning Poetry back is not expressly necessary
 # We also don't need virtual environments in container
-ENV POETRY_VERSION=1.5.1
 RUN which poetry || curl -sSL https://install.python-poetry.org | python3 - && \
   poetry config virtualenvs.create false
 
