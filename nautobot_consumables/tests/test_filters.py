@@ -15,6 +15,7 @@
 #
 
 """Tests for filters defined in the Nautobot Consumables app."""
+
 from nautobot.core.testing import FilterTestCases
 
 from nautobot_consumables import filters, models
@@ -198,8 +199,7 @@ class ConsumablePoolFilterSetTestCase(FilterTestCases.FilterTestCase):
             in_location = self.filterset({"q": pool.location.name}, self.queryset).qs
             not_in_location = self.filterset({"location__n": pool.location}, self.queryset).qs
             self.assertEqual(
-                in_location.count(),
-                self.queryset.all().count() - not_in_location.count()
+                in_location.count(), self.queryset.all().count() - not_in_location.count()
             )
 
     def test_tags_filter(self):

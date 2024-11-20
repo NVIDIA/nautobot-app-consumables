@@ -29,11 +29,7 @@ class DeviceViewTemplateExtensionsTestCase(ModelViewTestCase):
         self.assertHttpStatus(response, 200)
         response_body = extract_page_body(response.content.decode(response.charset))
 
-        self.assertIn(
-            "consumables?tab=nautobot_consumables:1",
-            response_body,
-            msg=response_body
-        )
+        self.assertIn("consumables?tab=nautobot_consumables:1", response_body, msg=response_body)
 
     @override_settings(EXEMPT_VIEW_PERMISSIONS=["*"])
     def test_get_instance_without_consumables(self):
@@ -42,7 +38,7 @@ class DeviceViewTemplateExtensionsTestCase(ModelViewTestCase):
             consumable_pools__isnull=True,
             location_type__in=LocationType.objects.filter(
                 content_types__in=[ContentType.objects.get_for_model(self.model)]
-            )
+            ),
         ).first()
 
         instance = self.model.objects.create(
@@ -63,11 +59,7 @@ class DeviceViewTemplateExtensionsTestCase(ModelViewTestCase):
         self.assertHttpStatus(response, 200)
         response_body = extract_page_body(response.content.decode(response.charset))
 
-        self.assertNotIn(
-            "consumables?tab=nautobot_consumables:1",
-            response_body,
-            msg=response_body
-        )
+        self.assertNotIn("consumables?tab=nautobot_consumables:1", response_body, msg=response_body)
 
 
 class LocationViewTemplateExtensionsTestCase(ModelViewTestCase):
@@ -90,11 +82,7 @@ class LocationViewTemplateExtensionsTestCase(ModelViewTestCase):
         self.assertHttpStatus(response, 200)
         response_body = extract_page_body(response.content.decode(response.charset))
 
-        self.assertIn(
-            "consumables?tab=nautobot_consumables:1",
-            response_body,
-            msg=response_body
-        )
+        self.assertIn("consumables?tab=nautobot_consumables:1", response_body, msg=response_body)
 
     @override_settings(EXEMPT_VIEW_PERMISSIONS=["*"])
     def test_get_instance_without_consumable_pools(self):
@@ -111,8 +99,4 @@ class LocationViewTemplateExtensionsTestCase(ModelViewTestCase):
         self.assertHttpStatus(response, 200)
         response_body = extract_page_body(response.content.decode(response.charset))
 
-        self.assertNotIn(
-            "consumables?tab=nautobot_consumables:1",
-            response_body,
-            msg=response_body
-        )
+        self.assertNotIn("consumables?tab=nautobot_consumables:1", response_body, msg=response_body)

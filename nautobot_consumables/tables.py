@@ -15,6 +15,7 @@
 #
 
 """Tables for Nautobot Consumables models."""
+
 import django_tables2 as tables
 from django_tables2.utils import Accessor
 from nautobot.apps.tables import (

@@ -15,6 +15,7 @@
 #
 
 """Tests for models defined by the Consumables app."""
+
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -41,8 +42,8 @@ class ConsumableTypeTestCase(TestCase):
                     "enum": ["m", "cm", "ft", "in"],
                     "options": {"enum_titles": ["Meters", "Centimeters", "Feet", "Inches"]},
                     "propertyOrder": 20,
-                }
-            }
+                },
+            },
         }
         cls.consumable_type = models.ConsumableType(name="Test Consumable Type", schema=test_schema)
 
@@ -62,8 +63,7 @@ class ConsumableTypeTestCase(TestCase):
             self.consumable_type.clean()
         error = context.exception
         self.assertEqual(
-            error.message,
-            "'imaginary' is not valid under any of the given schemas on ['type']"
+            error.message, "'imaginary' is not valid under any of the given schemas on ['type']"
         )
 
 
@@ -131,7 +131,7 @@ class ConsumableTestCase(TestCase):
             error = context.exception
             self.assertEqual(
                 error.message,
-                "Data validation against schema schema failed: 'color' is a required property"
+                "Data validation against schema schema failed: 'color' is a required property",
             )
 
 
@@ -171,7 +171,7 @@ class ConsumablePoolTestCase(TestCase):
         """Test the string representation of the model."""
         self.assertEqual(
             f"{self.consumable_pool}",
-            f"Test Consumable Pool ({self.consumable_pool.location.name})"
+            f"Test Consumable Pool ({self.consumable_pool.location.name})",
         )
 
     def test_change_consumable(self):
@@ -250,8 +250,7 @@ class CheckedOutConsumableTestCase(TestCase):
         with self.subTest(check="complete"):
             new_checked_out_consumable.device = new_device
             self.assertEqual(
-                f"{new_checked_out_consumable}",
-                f"{new_device.name} | Generic 1 Pool 1"
+                f"{new_checked_out_consumable}", f"{new_device.name} | Generic 1 Pool 1"
             )
 
     def test_invalid_device(self):
@@ -271,7 +270,7 @@ class CheckedOutConsumableTestCase(TestCase):
         self.assertEqual(
             error.message,
             f"Cannot check out consumables from Pool {pool.name} in location "
-            f"{pool.location.name} to Device {device.name} in location {device.location.name}"
+            f"{pool.location.name} to Device {device.name} in location {device.location.name}",
         )
 
     def test_invalid_quantity(self):

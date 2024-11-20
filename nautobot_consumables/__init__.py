@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 """App config declaration for Nautobot Consumables."""
+
 # Metadata is inherited from Nautobot. If not including Nautobot
 # in the environment, this should be added
 from importlib import metadata
@@ -45,6 +46,7 @@ class NautobotConsumablesConfig(NautobotAppConfig):
         """Register custom signals at startup."""
         # pylint:disable=import-outside-toplevel
         from nautobot_consumables import signals
+
         post_migrate.connect(signals.post_migrate_create_defaults, sender=self)
 
         super().ready()

@@ -15,6 +15,7 @@
 #
 
 """Extend the built-in templates with Consumables information."""
+
 from typing import Any
 from uuid import UUID
 
@@ -39,9 +40,7 @@ class DeviceConsumablesCount(TemplateExtension):
         super().__init__(context)
 
         self.obj_pk = context["object"].pk
-        self.consumables_count = CheckedOutConsumable.objects.filter(
-            device__pk=self.obj_pk
-        ).count()
+        self.consumables_count = CheckedOutConsumable.objects.filter(device__pk=self.obj_pk).count()
         self.pools_count = ConsumablePool.objects.filter(
             location__pk=context["object"].location.pk
         ).count()

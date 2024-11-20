@@ -15,6 +15,7 @@
 #
 
 """Nautobot Consumables test fixtures."""
+
 from nautobot_consumables.tests.fixtures.create_obj_fixtures import create_env
 
 __all__ = ("create_env",)

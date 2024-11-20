@@ -15,6 +15,7 @@
 #
 
 """Serializers for Nautobot Consumables API endpoints."""
+
 from nautobot.apps.api import NautobotModelSerializer, TaggedModelSerializerMixin
 from rest_framework.serializers import HyperlinkedIdentityField
 

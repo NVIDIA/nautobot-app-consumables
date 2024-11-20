@@ -15,6 +15,7 @@
 #
 
 """URL route mapping for the Nautobot Consumables app."""
+
 from django.templatetags.static import static
 from django.urls import path
 from django.views.generic import RedirectView

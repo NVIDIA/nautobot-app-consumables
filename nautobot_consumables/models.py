@@ -102,10 +102,9 @@ class JSONModel(PrimaryModel):
 
             if self.data:
                 try:
-                    Draft4Validator(
-                        self.schema,
-                        format_checker=draft4_format_checker
-                    ).validate(self.data)
+                    Draft4Validator(self.schema, format_checker=draft4_format_checker).validate(
+                        self.data
+                    )
                 except JSONSchemaValidationError as error:
                     message = [f"Data validation against schema schema failed: {error.message}"]
                     if error.path:
@@ -128,6 +127,7 @@ class ConsumableType(JSONModel):
 
     class Meta:
         """ConsumableType model options."""
+
         verbose_name = "Consumable Type"
         verbose_name_plural = "Consumable Types"
 
@@ -168,6 +168,7 @@ class Consumable(JSONModel):
 
     class Meta:
         """Consumable model options."""
+
         unique_together = [["manufacturer", "consumable_type", "product_id"]]
         ordering = ["consumable_type", "_name"]
         verbose_name = "Consumable"
@@ -182,9 +183,7 @@ class Consumable(JSONModel):
         if self.present_in_database:
             obj = self.__class__.objects.get(pk=self.pk)
             if self.consumable_type != obj.consumable_type:
-                raise ValidationError(
-                    "ConsumableType cannot be changed after creation."
-                )
+                raise ValidationError("ConsumableType cannot be changed after creation.")
         else:
             # If this is a new Consumable, copy the schema from its ConsumableType
             self.schema = self.consumable_type.schema
@@ -231,6 +230,7 @@ class ConsumablePool(PrimaryModel):
 
     class Meta:
         """ConsumablePool model options."""
+
         unique_together = [["consumable", "location", "name"]]
         ordering = ["consumable", "location", "name"]
         verbose_name = "Consumable Pool"
@@ -261,9 +261,7 @@ class ConsumablePool(PrimaryModel):
         if self.present_in_database:
             obj = self.__class__.objects.get(pk=self.pk)
             if self.consumable != obj.consumable:
-                raise ValidationError(
-                    "Consumable cannot be changed after creation."
-                )
+                raise ValidationError("Consumable cannot be changed after creation.")
 
 
 @extras_features("custom_fields", "custom_links", "graphql", "relationships")
@@ -296,7 +294,7 @@ class CheckedOutConsumable(PrimaryModel):
         """Default string representation of the CheckedOutConsumable."""
         parts = [
             self.device.name if hasattr(self, "device") else "No Device",
-            self.consumable_pool.name if hasattr(self, "consumable_pool") else "No Pool"
+            self.consumable_pool.name if hasattr(self, "consumable_pool") else "No Pool",
         ]
         return " | ".join(parts)
 
