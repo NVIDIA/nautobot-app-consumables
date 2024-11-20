@@ -1,11 +1,12 @@
 """Tests for template extensions defined in the Consumables app."""
+
 from django.contrib.contenttypes.models import ContentType
 from django.test.utils import override_settings
 from nautobot.core.testing import extract_page_body
 from nautobot.core.testing.views import ModelViewTestCase
 from nautobot.dcim.models import Device, DeviceType, Location, LocationType
-from nautobot.users.models import ObjectPermission
 from nautobot.extras.models import Role, Status
+from nautobot.users.models import ObjectPermission
 
 
 class DeviceViewTemplateExtensionsTestCase(ModelViewTestCase):
