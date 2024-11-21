@@ -15,6 +15,7 @@
 #
 
 """Tables for Nautobot Consumables models."""
+
 import django_tables2 as tables
 from django_tables2.utils import Accessor
 from nautobot.apps.tables import (
@@ -143,6 +144,8 @@ class CheckedOutConsumableTable(BaseTable):
 class ConsumableBulkEditTable(BaseTable):
     """Table view for bulk-editing Consumable instances."""
 
+    name = tables.Column(linkify=True)
+
     class Meta(BaseTable.Meta):
         """ConsumableBulkEditTable model options."""
 
@@ -169,11 +172,13 @@ class ConsumableTable(BaseTable):
 class ConsumablePoolBulkEditTable(BaseTable):
     """Table view for bulk-editing ConsumablePool instances."""
 
+    name = tables.Column(linkify=True)
+
     class Meta(BaseTable.Meta):
         """ConsumablePoolBulkEditTable model options."""
 
         model = models.ConsumablePool
-        fields = ["pk", "name", "consumable", "location", "quantity"]
+        fields = ["name", "consumable", "location", "quantity", "used_quantity"]
 
 
 class ConsumablePoolDetailConsumableTable(BaseTable):

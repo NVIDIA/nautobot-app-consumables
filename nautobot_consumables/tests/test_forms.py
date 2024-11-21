@@ -15,6 +15,7 @@
 #
 
 """Tests for forms defined in the Nautobot Consumables app."""
+
 import json
 
 from nautobot.core.testing import TestCase
@@ -177,9 +178,9 @@ class ConsumableTypeFormsTestCase(TestCase):
 
         with self.subTest(initial="schema"):
             test_schema = {
-                'type': 'object',
-                'title': 'Test Schema',
-                'properties': {'unit': {'title': 'Unit', 'type': 'string'}},
+                "type": "object",
+                "title": "Test Schema",
+                "properties": {"unit": {"title": "Unit", "type": "string"}},
             }
             form = forms.ConsumableTypeForm(
                 data={

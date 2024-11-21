@@ -15,6 +15,7 @@
 #
 
 """Create test environment object fixtures."""
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.crypto import get_random_string
@@ -31,11 +32,13 @@ def create_devices():
     for num in range(1, 6):
         device_type = factory.random.randgen.choice(DeviceType.objects.all())
         device_role = factory.random.randgen.choice(Role.objects.all())
-        location = factory.random.randgen.choice(Location.objects.filter(
-            location_type__in=LocationType.objects.filter(
-                content_types__in=[ContentType.objects.get_for_model(Device)]
+        location = factory.random.randgen.choice(
+            Location.objects.filter(
+                location_type__in=LocationType.objects.filter(
+                    content_types__in=[ContentType.objects.get_for_model(Device)]
+                )
             )
-        ))
+        )
 
         _ = Device.objects.get_or_create(
             device_type=device_type,
@@ -121,7 +124,7 @@ def create_consumable_pools(consumables: list[list[models.Consumable]]):
                 quantity=num * consumable_num * 13,
             )
 
-            if num > 3:
+            if num > 3:  # noqa: PLR2004
                 continue
 
             models.CheckedOutConsumable.objects.get_or_create(
@@ -144,10 +147,14 @@ def create_env(seed: str | None = None):
         print("Creating Devices...")
         create_devices()
 
-    print("Creating Consumables..." if settings.VERSION_MINOR <= 1
-          else "Creating 15 consumables...")
+    print(
+        "Creating Consumables..." if settings.VERSION_MINOR <= 1 else "Creating 15 consumables..."
+    )
     consumables = create_consumables()
 
-    print("Creating Consumable Pools..." if settings.VERSION_MINOR <= 1
-          else "Creating 15 consumable pools and checking out 9 consumables...")
+    print(
+        "Creating Consumable Pools..."
+        if settings.VERSION_MINOR <= 1
+        else "Creating 15 consumable pools and checking out 9 consumables..."
+    )
     create_consumable_pools(consumables)

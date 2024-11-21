@@ -15,6 +15,7 @@
 #
 
 """Additional fields for the Naautobot Consumables app."""
+
 import json
 from typing import Any
 
@@ -30,7 +31,8 @@ class ConsumablesTypeJSONField(NBJSONField):
     but it doesn't actually work because the ancestor JSON field considers the empty string to
     be a null value, and returns None for it anyway.
     """
-    empty_values = (None, '', ())
+
+    empty_values = (None, "", ())
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Set the default widget placeholder to '{}'."""

@@ -15,17 +15,23 @@
 #
 
 """Views for the Nautobot Consumables app."""
+
+from typing import Type
+
 from django.contrib import messages
-from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 from django.urls import reverse
-from nautobot.core.views import generic
+from nautobot.apps.tables import BaseTable
 from nautobot.apps.views import NautobotUIViewSet
+from nautobot.core.views import generic
 from nautobot.dcim.models import Device, Location
 from nautobot.extras.models import CustomField
 
 from nautobot_consumables import filters, forms, models, tables
 from nautobot_consumables.api import serializers
+
+PAGE_SIZE = 25
 
 
 class CheckedOutConsumableUIViewSet(NautobotUIViewSet):
@@ -40,20 +46,25 @@ class CheckedOutConsumableUIViewSet(NautobotUIViewSet):
     queryset = models.CheckedOutConsumable.objects.all()
     serializer_class = serializers.CheckedOutConsumableSerializer
     table_class = tables.CheckedOutConsumableTable
+    bulk_table_class = tables.CheckedOutConsumableBulkEditTable
 
     def get_extra_context(self, request, instance=None):
         """Gather extra context for the views."""
         context = super().get_extra_context(request, instance)
-
-        if self.action in ["bulk_update", "bulk_destroy"]:
-            instances = self.queryset.filter(pk__in=self.pk_list)
-            context["table"] = tables.CheckedOutConsumableBulkEditTable(instances, orderable=False)
 
         if self.action in ["destroy", "bulk_destroy"]:
             context["panel_class"] = "warning"
             context["button_class"] = "warning"
 
         return context
+
+    def get_table_class(self) -> Type[BaseTable]:
+        """Get the appropriate table class for the view."""
+        if self.action.startswith("bulk"):
+            return self.bulk_table_class
+
+        table_class: Type[BaseTable] = super().get_table_class()
+        return table_class
 
 
 class ConsumableUIViewSet(NautobotUIViewSet):
@@ -67,6 +78,7 @@ class ConsumableUIViewSet(NautobotUIViewSet):
     queryset = models.Consumable.objects.all()
     serializer_class = serializers.ConsumableSerializer
     table_class = tables.ConsumableTable
+    bulk_table_class = tables.ConsumableBulkEditTable
 
     def get_extra_context(self, request, instance=None):
         """Gather extra context for the views."""
@@ -82,12 +94,18 @@ class ConsumableUIViewSet(NautobotUIViewSet):
             if request.user.has_perm("nautobot_consumables.change_consumablepool"):
                 context["table_consumablepools"].columns.show("pk")
 
-            context["disable_pagination"] = len(context["table_consumablepools"].rows) <= 25
+            row_count = len(context["table_consumablepools"].rows)
+            context["disable_pagination"] = row_count <= PAGE_SIZE
 
-        if self.action in ["bulk_update", "bulk_destroy"]:
-            instances = self.queryset.filter(pk__in=self.pk_list)
-            context["table"] = tables.ConsumableBulkEditTable(instances, orderable=False)
         return context
+
+    def get_table_class(self) -> Type[BaseTable]:
+        """Get the appropriate table class for the view."""
+        if self.action.startswith("bulk"):
+            return self.bulk_table_class
+
+        table_class: Type[BaseTable] = super().get_table_class()
+        return table_class
 
     def get_template_name(self) -> str:
         """Get the appropriate template for create and update actions."""
@@ -108,6 +126,7 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
     queryset = models.ConsumablePool.objects.all()
     serializer_class = serializers.ConsumablePoolSerializer
     table_class = tables.ConsumablePoolTable
+    bulk_table_class = tables.ConsumablePoolBulkEditTable
 
     obj: models.ConsumablePool
 
@@ -125,7 +144,8 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
             if request.user.has_perm("nautobot_consumables.change_checkedoutconsumable"):
                 context["table_checkedoutconsumables"].columns.show("pk")
 
-            context["disable_pagination"] = len(context["table_checkedoutconsumables"].rows) <= 25
+            row_count = len(context["table_checkedoutconsumables"].rows)
+            context["disable_pagination"] = row_count <= PAGE_SIZE
 
         if self.action == "update":
             if instance is None:
@@ -135,9 +155,7 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
             context["checked_out"] = instance.used_quantity
 
         if self.action in ["bulk_update", "bulk_destroy"]:
-            pools = self.queryset.filter(pk__in=self.pk_list)
-            context["table"] = tables.ConsumablePoolBulkEditTable(pools, orderable=False)
-
+            pools = self.queryset.filter(pk__in=request.data.getlist("pk"))
             checked_out = 0
             for pool in pools:
                 checked_out += pool.used_quantity
@@ -145,7 +163,16 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
 
         return context
 
-    def _process_bulk_update_form(self, form) -> None:  # pylint: disable=too-many-branches
+    def get_table_class(self) -> Type[BaseTable]:
+        """Get the appropriate table class for the view."""
+        if self.action.startswith("bulk"):
+            return self.bulk_table_class
+
+        table_class: Type[BaseTable] = super().get_table_class()
+        return table_class
+
+    def _process_bulk_update_form(self, form) -> None:  # noqa: PLR0912
+        # pylint: disable=too-many-branches
         """Perform the actual work on a bulk update if the form is valid."""
         request = self.request
         queryset = self.get_queryset()
@@ -229,7 +256,8 @@ class ConsumableTypeUIViewSet(NautobotUIViewSet):
             if request.user.has_perm("nautobot_consumables.change_consumable"):
                 context["table_consumables"].columns.show("pk")
 
-            context["disable_pagination"] = len(context["table_consumables"].rows) <= 25
+            row_count = len(context["table_consumables"].rows)
+            context["disable_pagination"] = row_count <= PAGE_SIZE
 
         return context
 
@@ -254,22 +282,28 @@ class DeviceConsumablesViewTab(generic.ObjectView):
         context["table_checkedoutconsumables"] = tables.CheckedOutConsumableDetailDeviceTabTable(
             models.CheckedOutConsumable.objects.filter(device__pk=instance.pk)
         )
-        context["disable_pagination_checkedout"] = len(
-            context["table_checkedoutconsumables"].rows
-        ) <= 25
+
+        row_count = len(context["table_checkedoutconsumables"].rows)
+        context["disable_pagination_checkedout"] = row_count <= PAGE_SIZE
 
         context["table_consumablepools"] = tables.ConsumablePoolDetailLocationTabTable(
-            models.ConsumablePool.objects.filter(location__pk=instance.location.pk)
-            .exclude(checked_out__device__pk=instance.pk)
+            models.ConsumablePool.objects.filter(location__pk=instance.location.pk).exclude(
+                checked_out__device__pk=instance.pk
+            )
         )
-        context["disable_pagination_pools"] = len(context["table_consumablepools"].rows) <= 25
+
+        row_count = len(context["table_consumablepools"].rows)
+        context["disable_pagination_pools"] = row_count <= PAGE_SIZE
 
         context["add_querystring"] = f"location={instance.location.pk}"
 
-        return_url = [reverse(
-            "plugins:nautobot_consumables:device_consumables_tab",
-            kwargs={"pk": instance.pk},
-        ), "tab=nautobot_consumables:1"]
+        return_url = [
+            reverse(
+                "plugins:nautobot_consumables:device_consumables_tab",
+                kwargs={"pk": instance.pk},
+            ),
+            "tab=nautobot_consumables:1",
+        ]
         context["return_url"] = "?".join(return_url)
 
         return context
@@ -295,15 +329,19 @@ class LocationConsumablesViewTab(generic.ObjectView):
 
         context["add_querystring"] = f"location={instance.pk}"
 
-        context["disable_pagination_pools"] = len(context["table_consumablepools"].rows) <= 25
-        context["disable_pagination_checkedout"] = len(
-            context["table_checkedoutconsumables"].rows
-        ) <= 25
+        row_count = len(context["table_consumablepools"].rows)
+        context["disable_pagination_pools"] = row_count <= PAGE_SIZE
 
-        return_url = [reverse(
-            "plugins:nautobot_consumables:location_consumables_tab",
-            kwargs={"pk": instance.pk},
-        ), "tab=nautobot_consumables:1"]
+        checkedout_row_count = len(context["table_checkedoutconsumables"].rows)
+        context["disable_pagination_checkedout"] = checkedout_row_count <= PAGE_SIZE
+
+        return_url = [
+            reverse(
+                "plugins:nautobot_consumables:location_consumables_tab",
+                kwargs={"pk": instance.pk},
+            ),
+            "tab=nautobot_consumables:1",
+        ]
         context["return_url"] = "?".join(return_url)
 
         return context

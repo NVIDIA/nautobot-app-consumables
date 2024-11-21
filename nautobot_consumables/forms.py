@@ -15,6 +15,7 @@
 #
 
 """Forms for Nautobot Consumables models."""
+
 from typing import Any
 
 from django import forms
@@ -51,8 +52,10 @@ class ConsumablesBaseModelForm(NautobotModelForm):
         # If any of the `disabled` fields are set, either in the instance being updated, or in
         # the initial data, disable them in the UI
         for field in self.disabled:
-            if (getattr(self.instance, field, None) is not None
-                    or self.initial.get(field, None) is not None):
+            if (
+                getattr(self.instance, field, None) is not None
+                or self.initial.get(field, None) is not None
+            ):
                 self.fields[field].disabled = True
 
 
@@ -125,7 +128,7 @@ class CheckedOutConsumableForm(ConsumablesBaseModelForm):
             "consumable_pool",
             models.ConsumablePool.objects.filter(
                 pk=self.initial.get("consumable_pool", None)
-            ).first()
+            ).first(),
         ):
             # If `device` is not set in the instance, or in the initial data, limit its
             # choices to those assigned to the same location as the ConsumablePool
@@ -221,7 +224,9 @@ class ConsumablePoolFilterForm(NautobotFilterForm, CustomFieldModelFilterFormMix
     field_order = ["q", "consumable", "name", "location", "quantity"]
     q = forms.CharField(required=False, label="Search")
 
-    consumable = DynamicModelMultipleChoiceField(queryset=models.Consumable.objects.all(), required=False)
+    consumable = DynamicModelMultipleChoiceField(
+        queryset=models.Consumable.objects.all(), required=False
+    )
     location = DynamicModelMultipleChoiceField(queryset=Location.objects.all(), required=False)
 
 

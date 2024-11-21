@@ -15,6 +15,7 @@
 #
 
 """Test the Nautobot Consumables API endpoints."""
+
 from django.contrib.auth import get_user_model
 from nautobot.core.testing.api import APIViewTestCases
 from nautobot.dcim.models import Device, Location, Manufacturer
@@ -87,7 +88,7 @@ class ConsumableAPITestCase(APIViewTestCases.APIViewTestCase):
             manufacturer=Manufacturer.objects.first(),
             product_id="test_transceiver_001",
             consumable_type=models.ConsumableType.objects.get(name="Transceiver"),
-            data={"reach": "LR", "form_factor": "QSFP-DD (400GE)"}
+            data={"reach": "LR", "form_factor": "QSFP-DD (400GE)"},
         )
         models.Consumable.objects.create(
             name="Test Generic",

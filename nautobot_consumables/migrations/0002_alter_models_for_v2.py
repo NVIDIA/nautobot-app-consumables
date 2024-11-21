@@ -5,51 +5,50 @@ from nautobot.core.models.fields import TagsField
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('extras', '0098_rename_data_jobresult_result'),
-        ('nautobot_consumables', '0001_initial'),
+        ("extras", "0098_rename_data_jobresult_result"),
+        ("nautobot_consumables", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='checkedoutconsumable',
-            name='created',
+            model_name="checkedoutconsumable",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='checkedoutconsumable',
-            name='tags',
-            field=TagsField(through='extras.TaggedItem', to='extras.Tag'),
+            model_name="checkedoutconsumable",
+            name="tags",
+            field=TagsField(through="extras.TaggedItem", to="extras.Tag"),
         ),
         migrations.AlterField(
-            model_name='consumable',
-            name='created',
+            model_name="consumable",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='consumable',
-            name='tags',
-            field=TagsField(through='extras.TaggedItem', to='extras.Tag'),
+            model_name="consumable",
+            name="tags",
+            field=TagsField(through="extras.TaggedItem", to="extras.Tag"),
         ),
         migrations.AlterField(
-            model_name='consumablepool',
-            name='created',
+            model_name="consumablepool",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='consumablepool',
-            name='tags',
-            field=TagsField(through='extras.TaggedItem', to='extras.Tag'),
+            model_name="consumablepool",
+            name="tags",
+            field=TagsField(through="extras.TaggedItem", to="extras.Tag"),
         ),
         migrations.AlterField(
-            model_name='consumabletype',
-            name='created',
+            model_name="consumabletype",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='consumabletype',
-            name='tags',
-            field=TagsField(through='extras.TaggedItem', to='extras.Tag'),
+            model_name="consumabletype",
+            name="tags",
+            field=TagsField(through="extras.TaggedItem", to="extras.Tag"),
         ),
     ]

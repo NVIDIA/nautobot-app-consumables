@@ -26,10 +26,10 @@ namespace.add_collection(Collection.from_module(test))
 namespace.configure(
     {
         "nautobot_consumables": {
-            "nautobot_ver": "1.6.1",
+            "nautobot_ver": "2.3.10",
             "project_name": "nautobot-consumables",
             "project_source": "nautobot_consumables",
-            "python_ver": "3.10",
+            "python_ver": "3.12",
             "local": False,
             "compose_dir": BASE_DIR.joinpath("development").as_posix(),
             "compose_files": [
