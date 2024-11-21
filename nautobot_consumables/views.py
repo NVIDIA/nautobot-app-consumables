@@ -16,10 +16,13 @@
 
 """Views for the Nautobot Consumables app."""
 
+from typing import Type
+
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.urls import reverse
+from nautobot.apps.tables import BaseTable
 from nautobot.apps.views import NautobotUIViewSet
 from nautobot.core.views import generic
 from nautobot.dcim.models import Device, Location
@@ -43,20 +46,25 @@ class CheckedOutConsumableUIViewSet(NautobotUIViewSet):
     queryset = models.CheckedOutConsumable.objects.all()
     serializer_class = serializers.CheckedOutConsumableSerializer
     table_class = tables.CheckedOutConsumableTable
+    bulk_table_class = tables.CheckedOutConsumableBulkEditTable
 
     def get_extra_context(self, request, instance=None):
         """Gather extra context for the views."""
         context = super().get_extra_context(request, instance)
-
-        if self.action in ["bulk_update", "bulk_destroy"]:
-            instances = self.queryset.filter(pk__in=self.pk_list)
-            context["table"] = tables.CheckedOutConsumableBulkEditTable(instances, orderable=False)
 
         if self.action in ["destroy", "bulk_destroy"]:
             context["panel_class"] = "warning"
             context["button_class"] = "warning"
 
         return context
+
+    def get_table_class(self) -> Type[BaseTable]:
+        """Get the appropriate table class for the view."""
+        if self.action.startswith("bulk"):
+            return self.bulk_table_class
+
+        table_class: Type[BaseTable] = super().get_table_class()
+        return table_class
 
 
 class ConsumableUIViewSet(NautobotUIViewSet):
@@ -70,6 +78,7 @@ class ConsumableUIViewSet(NautobotUIViewSet):
     queryset = models.Consumable.objects.all()
     serializer_class = serializers.ConsumableSerializer
     table_class = tables.ConsumableTable
+    bulk_table_class = tables.ConsumableBulkEditTable
 
     def get_extra_context(self, request, instance=None):
         """Gather extra context for the views."""
@@ -88,10 +97,15 @@ class ConsumableUIViewSet(NautobotUIViewSet):
             row_count = len(context["table_consumablepools"].rows)
             context["disable_pagination"] = row_count <= PAGE_SIZE
 
-        if self.action in ["bulk_update", "bulk_destroy"]:
-            instances = self.queryset.filter(pk__in=self.pk_list)
-            context["table"] = tables.ConsumableBulkEditTable(instances, orderable=False)
         return context
+
+    def get_table_class(self) -> Type[BaseTable]:
+        """Get the appropriate table class for the view."""
+        if self.action.startswith("bulk"):
+            return self.bulk_table_class
+
+        table_class: Type[BaseTable] = super().get_table_class()
+        return table_class
 
     def get_template_name(self) -> str:
         """Get the appropriate template for create and update actions."""
@@ -112,6 +126,7 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
     queryset = models.ConsumablePool.objects.all()
     serializer_class = serializers.ConsumablePoolSerializer
     table_class = tables.ConsumablePoolTable
+    bulk_table_class = tables.ConsumablePoolBulkEditTable
 
     obj: models.ConsumablePool
 
@@ -140,15 +155,21 @@ class ConsumablePoolUIViewSet(NautobotUIViewSet):
             context["checked_out"] = instance.used_quantity
 
         if self.action in ["bulk_update", "bulk_destroy"]:
-            pools = self.queryset.filter(pk__in=self.pk_list)
-            context["table"] = tables.ConsumablePoolBulkEditTable(pools, orderable=False)
-
+            pools = self.queryset.filter(pk__in=request.data.getlist("pk"))
             checked_out = 0
             for pool in pools:
                 checked_out += pool.used_quantity
             context["display_warning"] = checked_out > 0
 
         return context
+
+    def get_table_class(self) -> Type[BaseTable]:
+        """Get the appropriate table class for the view."""
+        if self.action.startswith("bulk"):
+            return self.bulk_table_class
+
+        table_class: Type[BaseTable] = super().get_table_class()
+        return table_class
 
     def _process_bulk_update_form(self, form) -> None:  # noqa: PLR0912
         # pylint: disable=too-many-branches
