@@ -257,7 +257,7 @@ def everything(context: Context, keepdb: bool = False, seed: str | None = None,
     if ruff_lint:
         print("-" * 70)
         print("\nRunning ruff...")
-        ruff(context)
+        ruff(context, action="both")
     else:
         print("-" * 70)
         print("\nRunning flake8...")
