@@ -7,9 +7,6 @@ concurrency:
 
 on:
   pull_request:
-    paths:
-      - "nautobot_consumables/**"
-      - "!nautobot_consumables/templates/**"
   workflow_dispatch:
 
 env:
@@ -17,7 +14,7 @@ env:
 
 jobs:
   ruff:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-24.04"
     env:
       INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
     steps:
@@ -29,7 +26,7 @@ jobs:
         run: poetry run invoke test.ruff -a both
 
   mypy:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-24.04"
     env:
       INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
     steps:
@@ -41,7 +38,7 @@ jobs:
         run: poetry run invoke test.mypy
 
   poetry:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-24.04"
     env:
       INVOKE_NAUTOBOT_CONSUMABLES_LOCAL: "True"
     steps:
@@ -57,7 +54,7 @@ jobs:
       - "ruff"
       - "mypy"
       - "poetry"
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-24.04"
     strategy:
       fail-fast: true
       matrix:
@@ -103,20 +100,20 @@ jobs:
   unittests:
     needs:
       - "pylint"
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-24.04"
     strategy:
       fail-fast: true
       matrix:
         python-version: ["3.11", "3.12"]
         db-backend: ["postgresql"]
-        nautobot-version: ["stable"]
+        nautobot-version: ["2.3.10"]
         include:
           - python-version: "3.11"
             db-backend: "postgresql"
             nautobot-version: "2.0.6"
           - python-version: "3.12"
             db-backend: "mysql"
-            nautobot-version: "stable"
+            nautobot-version: "2.3.10"
     env:
       INVOKE_NAUTOBOT_CONSUMABLES_PYTHON_VER: "${{ matrix.python-version }}"
       INVOKE_NAUTOBOT_CONSUMABLES_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"
